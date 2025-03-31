@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background Elements -->
+    <circle cx="400" cy="300" r="250" fill="#F3F4F6" opacity="0.5"/>
+    <path d="M600 200C600 310.457 510.457 400 400 400C289.543 400 200 310.457 200 200C200 89.5431 289.543 0 400 0C510.457 0 600 89.5431 600 200Z" fill="#E5E7EB" opacity="0.3"/>
+    
+    <!-- Graduation Cap -->
+    <path d="M400 150L500 200L400 250L300 200L400 150Z" fill="#4F46E5"/>
+    <path d="M380 220V280L420 260V220L380 220Z" fill="#4F46E5"/>
+    <circle cx="400" cy="200" r="10" fill="#312E81"/>
+    
+    <!-- Books Stack -->
+    <rect x="320" y="300" width="160" height="20" rx="5" fill="#818CF8"/>
+    <rect x="330" y="280" width="140" height="20" rx="5" fill="#6366F1"/>
+    <rect x="340" y="260" width="120" height="20" rx="5" fill="#4F46E5"/>
+    
+    <!-- Handshake Symbol -->
+    <path d="M450 350C450 350 470 360 490 350C510 340 530 350 530 350" stroke="#4F46E5" stroke-width="8" stroke-linecap="round"/>
+    <path d="M270 350C270 350 290 360 310 350C330 340 350 350 350 350" stroke="#4F46E5" stroke-width="8" stroke-linecap="round"/>
+    
+    <!-- Dollar Symbols -->
+    <text x="280" y="420" font-family="Arial" font-size="40" fill="#4F46E5">$</text>
+    <text x="500" y="420" font-family="Arial" font-size="40" fill="#4F46E5">$</text>
+    
+    <!-- Connection Lines -->
+    <line x1="300" y1="450" x2="500" y2="450" stroke="#818CF8" stroke-width="4" stroke-dasharray="10 5"/>
+    
+    <!-- Decorative Elements -->
+    <circle cx="250" cy="150" r="20" fill="#C7D2FE" opacity="0.5"/>
+    <circle cx="550" cy="150" r="15" fill="#C7D2FE" opacity="0.5"/>
+    <circle cx="400" cy="500" r="25" fill="#C7D2FE" opacity="0.5"/>
+</svg> 

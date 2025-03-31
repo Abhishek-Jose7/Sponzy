@@ -1,0 +1,381 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome to EduSponsor+ - Connect, Fund, Achieve{% endblock %}
+
+{% block extra_css %}
+<style>
+.hero-section {
+    position: relative;
+    padding: var(--spacing-16) 0;
+    background: linear-gradient(135deg, var(--primary-color/5) 0%, var(--primary-color/10) 100%);
+    overflow: hidden;
+}
+
+.hero-shape {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50%;
+    height: 100%;
+    background: var(--primary-color/5);
+    clip-path: polygon(20% 0%, 100% 0%, 100% 100%, 0% 100%);
+    z-index: 0;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: var(--spacing-6);
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-subtitle {
+    font-size: 1.25rem;
+    color: var(--neutral-600);
+    margin-bottom: var(--spacing-8);
+    max-width: 600px;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: var(--spacing-4);
+    margin-bottom: var(--spacing-8);
+}
+
+.stats-section {
+    padding: var(--spacing-16) 0;
+    background: white;
+}
+
+.stat-card {
+    text-align: center;
+    padding: var(--spacing-6);
+    border-radius: var(--radius-lg);
+    background: white;
+    box-shadow: var(--shadow-md);
+    transition: transform var(--transition-normal);
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-4);
+}
+
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--neutral-900);
+    margin-bottom: var(--spacing-2);
+}
+
+.stat-label {
+    color: var(--neutral-600);
+    font-size: 1.1rem;
+}
+
+.features-section {
+    padding: var(--spacing-16) 0;
+    background: var(--neutral-50);
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: var(--spacing-12);
+}
+
+.section-title h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--neutral-900);
+    margin-bottom: var(--spacing-4);
+}
+
+.section-title p {
+    color: var(--neutral-600);
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.feature-card {
+    padding: var(--spacing-6);
+    border-radius: var(--radius-lg);
+    background: white;
+    box-shadow: var(--shadow-md);
+    height: 100%;
+    transition: transform var(--transition-normal);
+}
+
+.feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.feature-icon {
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-4);
+}
+
+.feature-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--neutral-900);
+    margin-bottom: var(--spacing-2);
+}
+
+.feature-description {
+    color: var(--neutral-600);
+}
+
+.cta-section {
+    padding: var(--spacing-16) 0;
+    background: var(--gradient-primary);
+    color: white;
+    text-align: center;
+}
+
+.cta-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: var(--spacing-4);
+}
+
+.cta-description {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto var(--spacing-8) auto;
+}
+
+.testimonials-section {
+    padding: var(--spacing-16) 0;
+    background: white;
+}
+
+.testimonial-card {
+    padding: var(--spacing-6);
+    border-radius: var(--radius-lg);
+    background: white;
+    box-shadow: var(--shadow-md);
+    height: 100%;
+    transition: transform var(--transition-normal);
+}
+
+.testimonial-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.testimonial-content {
+    font-size: 1.1rem;
+    color: var(--neutral-600);
+    margin-bottom: var(--spacing-4);
+}
+
+.testimonial-author {
+    display: flex;
+    align-items: center;
+}
+
+.author-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    margin-right: var(--spacing-4);
+}
+
+.author-info h4 {
+    font-size: 1.1rem;
+    color: var(--neutral-900);
+    margin-bottom: 0;
+}
+
+.author-info p {
+    color: var(--neutral-600);
+    font-size: 0.9rem;
+    margin: 0;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-shape"></div>
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 hero-content" data-aos="fade-right">
+                <h1 class="hero-title">Connect Education with Opportunity</h1>
+                <p class="hero-subtitle">EduSponsor+ bridges the gap between educational institutions and sponsors, making dreams come true through meaningful connections.</p>
+                <div class="hero-buttons">
+                    <a href="{{ url_for('signup') }}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-rocket me-2"></i>Get Started
+                    </a>
+                    <a href="{{ url_for('how_it_works') }}" class="btn btn-outline-primary btn-lg">
+                        <i class="fas fa-info-circle me-2"></i>Learn More
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <img src="{{ url_for('static', filename='images/hero-illustration.svg') }}" alt="Education Sponsorship" class="img-fluid">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-3" data-aos="fade-up" data-aos-delay="0">
+                <div class="stat-card">
+                    <i class="fas fa-users stat-icon"></i>
+                    <div class="stat-value">10K+</div>
+                    <div class="stat-label">Active Users</div>
+                </div>
+            </div>
+            <div class="col-md-3" data-aos="fade-up" data-aos-delay="100">
+                <div class="stat-card">
+                    <i class="fas fa-calendar-check stat-icon"></i>
+                    <div class="stat-value">5K+</div>
+                    <div class="stat-label">Events Funded</div>
+                </div>
+            </div>
+            <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
+                <div class="stat-card">
+                    <i class="fas fa-hand-holding-usd stat-icon"></i>
+                    <div class="stat-value">$2M+</div>
+                    <div class="stat-label">Total Funding</div>
+                </div>
+            </div>
+            <div class="col-md-3" data-aos="fade-up" data-aos-delay="300">
+                <div class="stat-card">
+                    <i class="fas fa-globe stat-icon"></i>
+                    <div class="stat-value">50+</div>
+                    <div class="stat-label">Countries</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+    <div class="container">
+        <div class="section-title">
+            <h2>Why Choose EduSponsor+</h2>
+            <p>Discover how our platform makes educational sponsorship simple, secure, and successful.</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="0">
+                <div class="feature-card">
+                    <i class="fas fa-shield-alt feature-icon"></i>
+                    <h3 class="feature-title">Secure Platform</h3>
+                    <p class="feature-description">Advanced security measures and verification processes to ensure safe transactions and protect user data.</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-card">
+                    <i class="fas fa-handshake feature-icon"></i>
+                    <h3 class="feature-title">Smart Matching</h3>
+                    <p class="feature-description">Intelligent algorithms to connect seekers with the most relevant sponsors based on interests and goals.</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-card">
+                    <i class="fas fa-chart-line feature-icon"></i>
+                    <h3 class="feature-title">Track Progress</h3>
+                    <p class="feature-description">Comprehensive dashboard to monitor sponsorships, track funding progress, and measure impact.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="testimonials-section">
+    <div class="container">
+        <div class="section-title">
+            <h2>Success Stories</h2>
+            <p>Hear from our community about their experiences with EduSponsor+.</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="0">
+                <div class="testimonial-card">
+                    <p class="testimonial-content">"EduSponsor+ helped us secure funding for our annual science fair. The platform's ease of use and professional support made the entire process smooth."</p>
+                    <div class="testimonial-author">
+                        <img src="{{ url_for('static', filename='images/testimonial-1.jpg') }}" alt="Sarah Johnson" class="author-avatar">
+                        <div class="author-info">
+                            <h4>Sarah Johnson</h4>
+                            <p>Science Department Head</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="testimonial-card">
+                    <p class="testimonial-content">"As a sponsor, finding meaningful educational projects to support has never been easier. The platform provides detailed insights and impact metrics."</p>
+                    <div class="testimonial-author">
+                        <img src="{{ url_for('static', filename='images/testimonial-2.jpg') }}" alt="Michael Chen" class="author-avatar">
+                        <div class="author-info">
+                            <h4>Michael Chen</h4>
+                            <p>Corporate Sponsor</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="testimonial-card">
+                    <p class="testimonial-content">"The verification process gave us confidence in the platform. We've successfully funded multiple projects and seen real impact in education."</p>
+                    <div class="testimonial-author">
+                        <img src="{{ url_for('static', filename='images/testimonial-3.jpg') }}" alt="Emily Rodriguez" class="author-avatar">
+                        <div class="author-info">
+                            <h4>Emily Rodriguez</h4>
+                            <p>Foundation Director</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container">
+        <h2 class="cta-title">Ready to Make a Difference?</h2>
+        <p class="cta-description">Join our community of educational institutions and sponsors working together to create impactful learning experiences.</p>
+        <a href="{{ url_for('signup') }}" class="btn btn-light btn-lg">
+            <i class="fas fa-user-plus me-2"></i>Create Your Account
+        </a>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize AOS with custom settings for the landing page
+    AOS.init({
+        duration: 1000,
+        once: true,
+        offset: 100
+    });
+});
+</script>
+{% endblock %} 

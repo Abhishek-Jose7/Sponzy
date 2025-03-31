@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Welcome Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-4">Welcome, {{ current_user.username }}!</h1>
+            <p class="lead">Here's an overview of your {{ 'events and sponsorships' if current_user.role == 'seeker' else 'sponsorships and recommended events' }}</p>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        {% if current_user.role == 'seeker' %}
+        <div class="col-md-3 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-calendar-alt fa-2x text-primary mb-3"></i>
+                    <h3>{{ stats.total_events }}</h3>
+                    <p class="text-muted mb-0">Total Events</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-play-circle fa-2x text-success mb-3"></i>
+                    <h3>{{ stats.active_events }}</h3>
+                    <p class="text-muted mb-0">Active Events</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-dollar-sign fa-2x text-warning mb-3"></i>
+                    <h3>${{ "%.2f"|format(stats.total_funding) }}</h3>
+                    <p class="text-muted mb-0">Total Funding</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-handshake fa-2x text-info mb-3"></i>
+                    <h3>{{ stats.active_sponsorships }}</h3>
+                    <p class="text-muted mb-0">Active Sponsorships</p>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-md-3 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-handshake fa-2x text-primary mb-3"></i>
+                    <h3>{{ stats.total_sponsorships }}</h3>
+                    <p class="text-muted mb-0">Total Sponsorships</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-check-circle fa-2x text-success mb-3"></i>
+                    <h3>{{ stats.active_sponsorships }}</h3>
+                    <p class="text-muted mb-0">Active Sponsorships</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-dollar-sign fa-2x text-warning mb-3"></i>
+                    <h3>${{ "%.2f"|format(stats.total_sponsored) }}</h3>
+                    <p class="text-muted mb-0">Total Sponsored</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-calendar-check fa-2x text-info mb-3"></i>
+                    <h3>{{ stats.sponsored_events }}</h3>
+                    <p class="text-muted mb-0">Sponsored Events</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="row">
+        {% if current_user.role == 'seeker' %}
+        <!-- Recent Events -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Recent Events</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% for event in recent_events %}
+                        <a href="{{ url_for('event_details', event_id=event.id) }}" class="list-group-item list-group-item-action">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">{{ event.title }}</h6>
+                                    <small class="text-muted">{{ event.date|date }}</small>
+                                </div>
+                                <span class="badge bg-{{ 'success' if event.status == 'active' else 'secondary' }}">
+                                    {{ event.status|title }}
+                                </span>
+                            </div>
+                        </a>
+                        {% else %}
+                        <div class="list-group-item text-center text-muted">
+                            No events yet
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Sponsorships -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Recent Sponsorships</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% for sponsorship in recent_sponsorships %}
+                        <a href="{{ url_for('sponsorship_details', sponsorship_id=sponsorship.id) }}" class="list-group-item list-group-item-action">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">{{ sponsorship.event.title }}</h6>
+                                    <small class="text-muted">${{ "%.2f"|format(sponsorship.amount) }}</small>
+                                </div>
+                                <span class="badge bg-{{ 'success' if sponsorship.status == 'approved' else 'warning' if sponsorship.status == 'pending' else 'danger' }}">
+                                    {{ sponsorship.status|title }}
+                                </span>
+                            </div>
+                        </a>
+                        {% else %}
+                        <div class="list-group-item text-center text-muted">
+                            No sponsorships yet
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <!-- Recent Sponsorships -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Recent Sponsorships</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% for sponsorship in recent_sponsorships %}
+                        <a href="{{ url_for('sponsorship_details', sponsorship_id=sponsorship.id) }}" class="list-group-item list-group-item-action">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">{{ sponsorship.event.title }}</h6>
+                                    <small class="text-muted">${{ "%.2f"|format(sponsorship.amount) }}</small>
+                                </div>
+                                <span class="badge bg-{{ 'success' if sponsorship.status == 'approved' else 'warning' if sponsorship.status == 'pending' else 'danger' }}">
+                                    {{ sponsorship.status|title }}
+                                </span>
+                            </div>
+                        </a>
+                        {% else %}
+                        <div class="list-group-item text-center text-muted">
+                            No sponsorships yet
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recommended Events -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Recommended Events</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% for event in recommended_events %}
+                        <a href="{{ url_for('event_details', event_id=event.id) }}" class="list-group-item list-group-item-action">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">{{ event.title }}</h6>
+                                    <small class="text-muted">{{ event.date|date }}</small>
+                                </div>
+                                <span class="badge bg-primary">
+                                    ${{ "%.2f"|format(event.funding_goal - event.current_funding) }} needed
+                                </span>
+                            </div>
+                        </a>
+                        {% else %}
+                        <div class="list-group-item text-center text-muted">
+                            No recommended events
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.card {
+    transition: transform var(--transition-fast);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.fa-2x {
+    color: var(--primary-color);
+}
+</style>
+{% endblock %}

@@ -1,0 +1,343 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - EduSponsor+{% endblock %}
+
+{% block extra_css %}
+<style>
+.admin-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.stat-card h3 {
+    margin: 0;
+    color: #666;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+
+.stat-card .value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #2C3E50;
+    margin: 0.5rem 0;
+}
+
+.users-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.users-section h2 {
+    margin: 0 0 1.5rem 0;
+    color: #2C3E50;
+}
+
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.users-table th,
+.users-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.users-table th {
+    background: #f8f9fa;
+    font-weight: 600;
+    color: #2C3E50;
+}
+
+.users-table tr:hover {
+    background: #f8f9fa;
+}
+
+.role-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.role-badge.seeker {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.role-badge.sponsor {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.role-badge.admin {
+    background: #fce4ec;
+    color: #c2185b;
+}
+
+.user-tabs {
+    margin-bottom: 1.5rem;
+}
+
+.user-tabs button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    background: none;
+    font-size: 1rem;
+    color: #666;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.user-tabs button.active {
+    color: #3498DB;
+    border-bottom-color: #3498DB;
+}
+
+.user-tabs button:hover {
+    color: #3498DB;
+}
+
+.pagination {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.pagination a {
+    padding: 0.5rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    color: #666;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.pagination a:hover {
+    background: #f8f9fa;
+    color: #3498DB;
+    border-color: #3498DB;
+}
+
+.pagination .active {
+    background: #3498DB;
+    color: white;
+    border-color: #3498DB;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="mb-4">Admin Dashboard</h1>
+
+    <!-- Stats Cards -->
+    <div class="admin-stats">
+        <div class="stat-card">
+            <h3>Total Users</h3>
+            <div class="value">{{ stats.user_count }}</div>
+        </div>
+        <div class="stat-card">
+            <h3>Total Events</h3>
+            <div class="value">{{ stats.event_count }}</div>
+        </div>
+        <div class="stat-card">
+            <h3>Total Sponsorships</h3>
+            <div class="value">{{ stats.sponsorship_count }}</div>
+        </div>
+        <div class="stat-card">
+            <h3>Pending Verifications</h3>
+            <div class="value">{{ stats.pending_verifications }}</div>
+        </div>
+    </div>
+
+    <!-- Admin Actions Section -->
+    <div class="users-section">
+        <h2>Administrative Actions</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Clear Sponsorship Requests</h5>
+                        <p class="card-text">Remove all pending sponsorship requests from seekers to sponsors.</p>
+                        <a href="{{ url_for('clear_requests') }}" class="btn btn-danger">Clear Requests</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Users Section -->
+    <div class="users-section">
+        <h2>User Management</h2>
+        
+        <!-- User Tabs -->
+        <div class="user-tabs">
+            <button class="active" onclick="showUserGroup('all')">All Users</button>
+            <button onclick="showUserGroup('seekers')">Seekers</button>
+            <button onclick="showUserGroup('sponsors')">Sponsors</button>
+            <button onclick="showUserGroup('admins')">Admins</button>
+        </div>
+
+        <!-- All Users Table -->
+        <div id="all-users" class="user-group">
+            <table class="users-table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Created At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users.items %}
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>
+                            <span class="role-badge {{ user.role }}">
+                                {{ user.role.title() }}
+                                {% if user.role == 'seeker' and user.seeker_type %}
+                                    ({{ user.seeker_type }})
+                                {% endif %}
+                            </span>
+                        </td>
+                        <td>
+                            {% if user.email_verified %}
+                                <span class="badge bg-success">Verified</span>
+                            {% else %}
+                                <span class="badge bg-warning">Unverified</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ user.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- Pagination -->
+            {% if users.pages > 1 %}
+            <div class="pagination">
+                {% for page_num in range(1, users.pages + 1) %}
+                    {% if page_num == users.page %}
+                        <a class="active" href="#">{{ page_num }}</a>
+                    {% else %}
+                        <a href="{{ url_for('admin_dashboard', page=page_num) }}">{{ page_num }}</a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Seekers Table -->
+        <div id="seekers" class="user-group" style="display: none;">
+            <table class="users-table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users_by_role.seekers %}
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.seeker_type.title() if user.seeker_type else 'N/A' }}</td>
+                        <td>
+                            {% if user.verification_status == 'approved' %}
+                                <span class="badge bg-success">Verified</span>
+                            {% elif user.verification_status == 'pending' %}
+                                <span class="badge bg-warning">Pending</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Unverified</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Sponsors Table -->
+        <div id="sponsors" class="user-group" style="display: none;">
+            <table class="users-table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Company</th>
+                        <th>Industry</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users_by_role.sponsors %}
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.company_name }}</td>
+                        <td>{{ user.industry }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Admins Table -->
+        <div id="admins" class="user-group" style="display: none;">
+            <table class="users-table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Created At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users_by_role.admins %}
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+function showUserGroup(group) {
+    // Hide all user groups
+    document.querySelectorAll('.user-group').forEach(el => el.style.display = 'none');
+    
+    // Show selected group
+    document.getElementById(group === 'all' ? 'all-users' : group).style.display = 'block';
+    
+    // Update active tab
+    document.querySelectorAll('.user-tabs button').forEach(btn => btn.classList.remove('active'));
+    document.querySelector(`.user-tabs button[onclick="showUserGroup('${group}')"]`).classList.add('active');
+}
+</script>
+{% endblock %} 

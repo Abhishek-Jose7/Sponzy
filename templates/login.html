@@ -1,0 +1,502 @@
+{% extends "base.html" %}
+
+{% block title %}Login - EduSponsor+{% endblock %}
+
+{% block extra_css %}
+<style>
+:root {
+    --primary-gradient: linear-gradient(135deg, #2C3E50 0%, #3498DB 100%);
+    --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    --input-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    --success-color: #2ecc71;
+    --danger-color: #e74c3c;
+}
+
+.login-wrapper {
+    min-height: calc(100vh - 80px);
+    background: var(--primary-gradient);
+    padding: 4rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-container {
+    max-width: 450px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 2.5rem;
+    background: white;
+    border-radius: 20px;
+    box-shadow: var(--card-shadow);
+    animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.login-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2C3E50;
+    margin-bottom: 0.5rem;
+}
+
+.login-header p {
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.social-login {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.social-btn {
+    flex: 1;
+    padding: 0.75rem;
+    border: 2px solid #eee;
+    border-radius: 12px;
+    background: white;
+    color: #333;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    cursor: pointer;
+}
+
+.social-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--input-shadow);
+}
+
+.social-btn.google:hover {
+    border-color: #DB4437;
+    color: #DB4437;
+}
+
+.social-btn.facebook:hover {
+    border-color: #4267B2;
+    color: #4267B2;
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 2rem 0;
+    color: #666;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 2px solid #eee;
+}
+
+.divider span {
+    padding: 0 1rem;
+    font-weight: 500;
+}
+
+.form-floating {
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.form-floating input {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    border: 2px solid #eee;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.form-floating input:focus {
+    border-color: #3498DB;
+    box-shadow: var(--input-shadow);
+    outline: none;
+}
+
+.form-floating label {
+    position: absolute;
+    top: 50%;
+    left: 1.25rem;
+    transform: translateY(-50%);
+    color: #666;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    background: white;
+    padding: 0 0.5rem;
+}
+
+.form-floating input:focus ~ label,
+.form-floating input:not(:placeholder-shown) ~ label {
+    top: 0;
+    font-size: 0.875rem;
+    color: #3498DB;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 1.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #666;
+}
+
+.form-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 1.5rem 0;
+}
+
+.form-check input {
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 4px;
+    border: 2px solid #eee;
+    cursor: pointer;
+}
+
+.form-check label {
+    color: #666;
+    cursor: pointer;
+    user-select: none;
+}
+
+.btn-login {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 12px;
+    background: var(--primary-gradient);
+    border: none;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--input-shadow);
+}
+
+.btn-login .spinner {
+    display: none;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.btn-login.loading {
+    color: transparent;
+}
+
+.btn-login.loading .spinner {
+    display: block;
+}
+
+.login-footer {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.login-footer p {
+    color: #666;
+    margin: 0.5rem 0;
+}
+
+.login-footer a {
+    color: #3498DB;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.login-footer a:hover {
+    color: #2C3E50;
+}
+
+.error-message {
+    color: var(--danger-color);
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    display: none;
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.form-floating.error input {
+    border-color: var(--danger-color);
+}
+
+.success-message {
+    color: var(--success-color);
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    display: none;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.alert-success {
+    background-color: rgba(46, 204, 113, 0.1);
+    border: 2px solid rgba(46, 204, 113, 0.2);
+    color: var(--success-color);
+}
+
+.alert-danger {
+    background-color: rgba(231, 76, 60, 0.1);
+    border: 2px solid rgba(231, 76, 60, 0.2);
+    color: var(--danger-color);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-wrapper">
+    <div class="login-container">
+        <div class="login-header">
+            <h1>Welcome Back</h1>
+            <p>Sign in to continue to EduSponsor+</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <div class="social-login">
+            <button class="social-btn google">
+                <i class="fab fa-google"></i>
+                Google
+            </button>
+            <button class="social-btn facebook">
+                <i class="fab fa-facebook-f"></i>
+                Facebook
+            </button>
+        </div>
+        
+        <div class="divider">
+            <span>or continue with email</span>
+        </div>
+        
+        <form method="POST" action="{{ url_for('login') }}" id="loginForm">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            
+            <div class="form-floating">
+                <input type="email" class="form-control" id="email" name="email" placeholder=" " required>
+                <label for="email">Email address</label>
+                <div class="error-message">Please enter a valid email address</div>
+                <div class="success-message">Email is valid</div>
+            </div>
+            
+            <div class="form-floating">
+                <input type="password" class="form-control" id="password" name="password" placeholder=" " required>
+                <label for="password">Password</label>
+                <i class="fas fa-eye password-toggle" id="passwordToggle"></i>
+                <div class="error-message">Password is required</div>
+            </div>
+            
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                <label class="form-check-label" for="remember">Keep me signed in</label>
+            </div>
+            
+            <button type="submit" class="btn btn-login">
+                <span class="btn-text">Sign In</span>
+                <div class="spinner">
+                    <i class="fas fa-circle-notch fa-spin"></i>
+                </div>
+            </button>
+        </form>
+        
+        <div class="login-footer">
+            <p>New to EduSponsor+? <a href="{{ url_for('signup') }}">Create an account</a></p>
+            <p><a href="{{ url_for('forgot_password') }}">Forgot your password?</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('loginForm');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const passwordToggle = document.getElementById('passwordToggle');
+    const submitButton = form.querySelector('.btn-login');
+    
+    function validateEmail(email) {
+        const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(String(email).toLowerCase());
+    }
+    
+    function showError(input, message) {
+        const formGroup = input.parentElement;
+        const errorMessage = formGroup.querySelector('.error-message');
+        const successMessage = formGroup.querySelector('.success-message');
+        formGroup.classList.add('error');
+        errorMessage.textContent = message;
+        errorMessage.style.display = 'block';
+        if (successMessage) successMessage.style.display = 'none';
+    }
+    
+    function showSuccess(input) {
+        const formGroup = input.parentElement;
+        const errorMessage = formGroup.querySelector('.error-message');
+        const successMessage = formGroup.querySelector('.success-message');
+        formGroup.classList.remove('error');
+        errorMessage.style.display = 'none';
+        if (successMessage) successMessage.style.display = 'block';
+    }
+    
+    function startLoading() {
+        submitButton.classList.add('loading');
+        submitButton.disabled = true;
+    }
+    
+    function stopLoading() {
+        submitButton.classList.remove('loading');
+        submitButton.disabled = false;
+    }
+    
+    // Toggle password visibility
+    passwordToggle.addEventListener('click', function() {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        this.classList.toggle('fa-eye');
+        this.classList.toggle('fa-eye-slash');
+    });
+    
+    // Form submission
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        let isValid = true;
+        
+        if (!validateEmail(emailInput.value)) {
+            showError(emailInput, 'Please enter a valid email address');
+            isValid = false;
+        } else {
+            showSuccess(emailInput);
+        }
+        
+        if (passwordInput.value.length < 6) {
+            showError(passwordInput, 'Password must be at least 6 characters long');
+            isValid = false;
+        } else {
+            showSuccess(passwordInput);
+        }
+        
+        if (isValid) {
+            startLoading();
+            
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form),
+                    headers: {
+                        'X-CSRFToken': document.querySelector('input[name="csrf_token"]').value
+                    }
+                });
+                
+                if (response.redirected) {
+                    window.location.href = response.url;
+                } else {
+                    const data = await response.json();
+                    if (data.error) {
+                        showError(emailInput, data.error);
+                    }
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError(emailInput, 'An error occurred. Please try again.');
+            } finally {
+                stopLoading();
+            }
+        }
+    });
+    
+    // Real-time validation
+    emailInput.addEventListener('input', function() {
+        if (validateEmail(this.value)) {
+            showSuccess(this);
+        } else {
+            showError(this, 'Please enter a valid email address');
+        }
+    });
+    
+    passwordInput.addEventListener('input', function() {
+        if (this.value.length >= 6) {
+            showSuccess(this);
+        } else {
+            showError(this, 'Password must be at least 6 characters long');
+        }
+    });
+    
+    // Social login buttons
+    document.querySelectorAll('.social-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Add implementation for social login
+            alert('Social login coming soon!');
+        });
+    });
+});
+</script>
+{% endblock %} 

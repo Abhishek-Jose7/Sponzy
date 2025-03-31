@@ -1,0 +1,460 @@
+{% extends "base.html" %}
+
+{% block title %}Review Organization Verification - EduSponsor+{% endblock %}
+
+{% block extra_css %}
+<style>
+:root {
+    --primary-gradient: linear-gradient(135deg, #2C3E50 0%, #3498DB 100%);
+    --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    --input-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.verify-admin-wrapper {
+    min-height: calc(100vh - 80px);
+    background: var(--primary-gradient);
+    padding: 4rem 0;
+}
+
+.verify-admin-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2.5rem;
+    background: white;
+    border-radius: 20px;
+    box-shadow: var(--card-shadow);
+}
+
+.verify-admin-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.verify-admin-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2C3E50;
+    margin-bottom: 0.5rem;
+}
+
+.verify-admin-header p {
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.org-info {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 12px;
+}
+
+.org-info h2 {
+    color: #2C3E50;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.org-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.info-item {
+    margin-bottom: 1rem;
+}
+
+.info-item label {
+    display: block;
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+.info-item span {
+    display: block;
+    color: #2C3E50;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.document-review {
+    margin: 2rem 0;
+}
+
+.document-review h3 {
+    color: #2C3E50;
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.document-card {
+    padding: 1.5rem;
+    border: 2px solid #eee;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.document-card:hover {
+    border-color: #3498DB;
+    box-shadow: var(--input-shadow);
+}
+
+.document-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.document-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2C3E50;
+}
+
+.document-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.btn-view {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    color: #2C3E50;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-view:hover {
+    background: #e9ecef;
+}
+
+.document-preview {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.document-preview img {
+    max-width: 100%;
+    max-height: 400px;
+    border-radius: 4px;
+}
+
+.verification-form {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid #eee;
+}
+
+.verification-form h3 {
+    color: #2C3E50;
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    color: #2C3E50;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.form-group textarea {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid #eee;
+    border-radius: 12px;
+    resize: vertical;
+    min-height: 120px;
+    transition: all 0.3s ease;
+}
+
+.form-group textarea:focus {
+    border-color: #3498DB;
+    box-shadow: var(--input-shadow);
+    outline: none;
+}
+
+.verification-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.btn-approve {
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    background: #28a745;
+    border: none;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-reject {
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    background: #dc3545;
+    border: none;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-approve:hover, .btn-reject:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--input-shadow);
+}
+
+.btn-approve:disabled, .btn-reject:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 20px;
+    max-width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.5rem;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.modal-close:hover {
+    color: #2C3E50;
+    transform: scale(1.1);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="verify-admin-wrapper">
+    <div class="verify-admin-container">
+        <div class="verify-admin-header">
+            <h1>Review Organization Verification</h1>
+            <p>Review and verify organization documents</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="org-info">
+            <h2>Organization Information</h2>
+            <div class="org-info-grid">
+                <div class="info-item">
+                    <label>Organization Name</label>
+                    <span>{{ organization.name }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Email</label>
+                    <span>{{ organization.email }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Submission Date</label>
+                    <span>{{ organization.verification_submitted_at.strftime('%B %d, %Y') }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Industry</label>
+                    <span>{{ organization.industry }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="document-review">
+            <h3>Document Review</h3>
+            
+            <div class="document-card">
+                <div class="document-header">
+                    <span class="document-title">Registration Document</span>
+                    <div class="document-actions">
+                        <button class="btn-view" onclick="viewDocument('registration')">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                        <button class="btn-view" onclick="downloadDocument('registration')">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                    </div>
+                </div>
+                <div id="registration-preview" class="document-preview"></div>
+            </div>
+
+            <div class="document-card">
+                <div class="document-header">
+                    <span class="document-title">Tax Document</span>
+                    <div class="document-actions">
+                        <button class="btn-view" onclick="viewDocument('tax_doc')">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                        <button class="btn-view" onclick="downloadDocument('tax_doc')">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                    </div>
+                </div>
+                <div id="tax_doc-preview" class="document-preview"></div>
+            </div>
+
+            <div class="document-card">
+                <div class="document-header">
+                    <span class="document-title">Proof of Address</span>
+                    <div class="document-actions">
+                        <button class="btn-view" onclick="viewDocument('proof_address')">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                        <button class="btn-view" onclick="downloadDocument('proof_address')">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                    </div>
+                </div>
+                <div id="proof_address-preview" class="document-preview"></div>
+            </div>
+        </div>
+
+        <form method="POST" class="verification-form" id="verificationForm">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            
+            <div class="form-group">
+                <label for="notes">Verification Notes</label>
+                <textarea id="notes" name="notes" placeholder="Add any notes about the verification decision..."></textarea>
+            </div>
+
+            <div class="verification-actions">
+                <button type="button" class="btn-approve" onclick="submitVerification('approved')">
+                    <i class="fas fa-check"></i> Approve
+                </button>
+                <button type="button" class="btn-reject" onclick="submitVerification('rejected')">
+                    <i class="fas fa-times"></i> Reject
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal" id="documentModal">
+    <div class="modal-content">
+        <i class="fas fa-times modal-close" onclick="closeModal()"></i>
+        <div id="modalContent"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('verificationForm');
+    const modal = document.getElementById('documentModal');
+    
+    // Close modal when clicking outside
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+});
+
+function viewDocument(docType) {
+    const modal = document.getElementById('documentModal');
+    const modalContent = document.getElementById('modalContent');
+    
+    // Here you would typically load the document preview
+    // For now, we'll show a placeholder
+    modalContent.innerHTML = `<div style="text-align: center;">
+        <h3>Document Preview</h3>
+        <p>Preview for ${docType} document</p>
+        <img src="/static/uploads/${docType}/${organization.id}/${docType}.pdf" 
+             alt="${docType} preview" style="max-width: 100%; max-height: 80vh;">
+    </div>`;
+    
+    modal.classList.add('active');
+}
+
+function closeModal() {
+    const modal = document.getElementById('documentModal');
+    modal.classList.remove('active');
+}
+
+function downloadDocument(docType) {
+    // Create a temporary link to download the file
+    const link = document.createElement('a');
+    link.href = `/download/${organization.id}/${docType}`;
+    link.download = `${organization.name}_${docType}`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function submitVerification(status) {
+    const form = document.getElementById('verificationForm');
+    const notes = document.getElementById('notes').value;
+    
+    if (status === 'rejected' && !notes.trim()) {
+        alert('Please provide notes explaining the rejection reason.');
+        return;
+    }
+    
+    if (confirm(`Are you sure you want to ${status} this organization's verification?`)) {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'status';
+        input.value = status;
+        form.appendChild(input);
+        
+        // Disable buttons
+        document.querySelector('.btn-approve').disabled = true;
+        document.querySelector('.btn-reject').disabled = true;
+        
+        form.submit();
+    }
+}
+</script>
+{% endblock %} 

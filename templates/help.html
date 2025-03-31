@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+
+{% block title %}Help Center{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Categories</h5>
+                    <div class="list-group list-group-flush">
+                        <a href="#getting-started" class="list-group-item list-group-item-action">Getting Started</a>
+                        <a href="#account-management" class="list-group-item list-group-item-action">Account Management</a>
+                        <a href="#events" class="list-group-item list-group-item-action">Events</a>
+                        <a href="#sponsorships" class="list-group-item list-group-item-action">Sponsorships</a>
+                        <a href="#payments" class="list-group-item list-group-item-action">Payments</a>
+                        <a href="#security" class="list-group-item list-group-item-action">Security</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5 class="card-title">Need More Help?</h5>
+                    <p class="card-text">Can't find what you're looking for?</p>
+                    <a href="{{ url_for('contact') }}" class="btn btn-primary">Contact Support</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <!-- Search -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form class="d-flex">
+                        <input type="search" class="form-control me-2" placeholder="Search help articles...">
+                        <button class="btn btn-outline-primary" type="submit">Search</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Getting Started -->
+            <section id="getting-started" class="mb-5">
+                <h2>Getting Started</h2>
+                <div class="accordion" id="gettingStartedAccordion">
+                    <div class="accordion-item">
+                        <h3 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" 
+                                    data-bs-target="#howToSignUp">
+                                How to Sign Up
+                            </button>
+                        </h3>
+                        <div id="howToSignUp" class="accordion-collapse collapse show" 
+                             data-bs-parent="#gettingStartedAccordion">
+                            <div class="accordion-body">
+                                <p>Follow these steps to create your account:</p>
+                                <ol>
+                                    <li>Click the "Sign Up" button in the top right corner</li>
+                                    <li>Choose your account type (Seeker or Sponsor)</li>
+                                    <li>Fill in your details</li>
+                                    <li>Verify your email address</li>
+                                    <li>Complete your profile</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Account Management -->
+            <section id="account-management" class="mb-5">
+                <h2>Account Management</h2>
+                <div class="accordion" id="accountAccordion">
+                    <div class="accordion-item">
+                        <h3 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" 
+                                    data-bs-target="#profileSettings">
+                                Profile Settings
+                            </button>
+                        </h3>
+                        <div id="profileSettings" class="accordion-collapse collapse show" 
+                             data-bs-parent="#accountAccordion">
+                            <div class="accordion-body">
+                                <p>Learn how to manage your profile settings:</p>
+                                <ul>
+                                    <li>Update your personal information</li>
+                                    <li>Change your password</li>
+                                    <li>Manage notification preferences</li>
+                                    <li>Set up two-factor authentication</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Events -->
+            <section id="events" class="mb-5">
+                <h2>Events</h2>
+                <div class="accordion" id="eventsAccordion">
+                    <div class="accordion-item">
+                        <h3 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" 
+                                    data-bs-target="#createEvent">
+                                Creating an Event
+                            </button>
+                        </h3>
+                        <div id="createEvent" class="accordion-collapse collapse show" 
+                             data-bs-parent="#eventsAccordion">
+                            <div class="accordion-body">
+                                <p>Follow these steps to create a new event:</p>
+                                <ol>
+                                    <li>Go to your dashboard</li>
+                                    <li>Click "Create Event"</li>
+                                    <li>Fill in event details</li>
+                                    <li>Set funding goals</li>
+                                    <li>Add images and documents</li>
+                                    <li>Publish your event</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sponsorships -->
+            <section id="sponsorships" class="mb-5">
+                <h2>Sponsorships</h2>
+                <div class="accordion" id="sponsorshipsAccordion">
+                    <div class="accordion-item">
+                        <h3 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" 
+                                    data-bs-target="#sponsorEvent">
+                                How to Sponsor an Event
+                            </button>
+                        </h3>
+                        <div id="sponsorEvent" class="accordion-collapse collapse show" 
+                             data-bs-parent="#sponsorshipsAccordion">
+                            <div class="accordion-body">
+                                <p>Learn how to sponsor events:</p>
+                                <ol>
+                                    <li>Browse available events</li>
+                                    <li>Review event details</li>
+                                    <li>Choose sponsorship amount</li>
+                                    <li>Complete payment</li>
+                                    <li>Track your sponsorship</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Payments -->
+            <section id="payments" class="mb-5">
+                <h2>Payments</h2>
+                <div class="accordion" id="paymentsAccordion">
+                    <div class="accordion-item">
+                        <h3 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" 
+                                    data-bs-target="#paymentMethods">
+                                Payment Methods
+                            </button>
+                        </h3>
+                        <div id="paymentMethods" class="accordion-collapse collapse show" 
+                             data-bs-parent="#paymentsAccordion">
+                            <div class="accordion-body">
+                                <p>We accept the following payment methods:</p>
+                                <ul>
+                                    <li>Credit/Debit Cards</li>
+                                    <li>Bank Transfer</li>
+                                    <li>PayPal</li>
+                                    <li>Cryptocurrency</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Security -->
+            <section id="security" class="mb-5">
+                <h2>Security</h2>
+                <div class="accordion" id="securityAccordion">
+                    <div class="accordion-item">
+                        <h3 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" 
+                                    data-bs-target="#accountSecurity">
+                                Account Security
+                            </button>
+                        </h3>
+                        <div id="accountSecurity" class="accordion-collapse collapse show" 
+                             data-bs-parent="#securityAccordion">
+                            <div class="accordion-body">
+                                <p>Protect your account with these security features:</p>
+                                <ul>
+                                    <li>Two-factor authentication</li>
+                                    <li>Strong password requirements</li>
+                                    <li>Login activity monitoring</li>
+                                    <li>Secure payment processing</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+<!-- Help Center Search Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.querySelector('input[type="search"]');
+    const sections = document.querySelectorAll('section');
+    
+    searchInput.addEventListener('input', function() {
+        const query = this.value.toLowerCase();
+        
+        sections.forEach(section => {
+            const content = section.textContent.toLowerCase();
+            const isMatch = content.includes(query);
+            section.style.display = isMatch || query === '' ? '' : 'none';
+        });
+    });
+});
+</script>
+{% endblock %} 

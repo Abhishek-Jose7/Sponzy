@@ -1,0 +1,302 @@
+{% extends "base.html" %}
+
+{% block title %}Find seekers Institutions | Sponzy{% endblock %}
+
+{% block content %}
+<div class="container py-5 sponsor-search">
+    <h1 class="mb-4">Find <span class="text-gradient">Similar Seekers</span></h1>
+    
+    <!-- Search form -->
+    <div class="card shadow-sm mb-5">
+        <div class="card-body">
+            <form action="{{ url_for('find_seekers') }}" method="GET" class="row g-3">
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" class="form-control" name="query" value="{{ query }}" placeholder="Search by name, organization or description">
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                        <a href="{{ url_for('find_seekers') }}" class="btn btn-outline-secondary">Reset</a>
+                        <button class="btn btn-outline-primary ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#advancedFilters">
+                            <i class="fas fa-filter me-2"></i>Advanced Filters
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="col-12 collapse" id="advancedFilters">
+                    <div class="card border-0 bg-light mt-3">
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <label class="form-label">Organization Type</label>
+                                    <select class="form-select" name="seeker_type">
+                                        <option value="">All Types</option>
+                                        <option value="individual" {% if seeker_type == 'individual' %}selected{% endif %}>Individual</option>
+                                        <option value="organization" {% if seeker_type == 'organization' %}selected{% endif %}>Organization</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Sector</label>
+                                    <select class="form-select" name="sector">
+                                        <option value="">All Sectors</option>
+                                        {% for sector in filter_options.sectors %}
+                                            <option value="{{ sector }}" {% if sector == sector %}selected{% endif %}>{{ sector }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Location</label>
+                                    <select class="form-select" name="location">
+                                        <option value="">All Locations</option>
+                                        {% for location in filter_options.locations %}
+                                            <option value="{{ location }}" {% if location == location %}selected{% endif %}>{{ location }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Sort By</label>
+                                    <select class="form-select" name="sort_by">
+                                        <option value="rating" {% if sort_by == 'rating' %}selected{% endif %}>Highest Rated</option>
+                                        <option value="recent" {% if sort_by == 'recent' %}selected{% endif %}>Most Recent</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Results display -->
+    {% if seekers_by_type and not query and not seeker_type and not sector and not location %}
+        <!-- Categorical display when no filters are applied -->
+        {% for type, type_seekers in seekers_by_type.items() %}
+            <section class="mb-5">
+                <h2 class="mb-4">
+                    {% if type == 'organization' %}
+                        Seeker Institutions
+                    {% elif type == 'individual' %}
+                        Individual Seekers
+                    {% else %}
+                        Other Partners
+                    {% endif %}
+                </h2>
+                <div class="row g-4">
+                    {% for seeker in type_seekers %}
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card h-100 sponsor-card">
+                                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        {% if seeker.profile_picture %}
+                                            <img src="{{ seeker.profile_picture }}" class="rounded-circle me-3" width="48" height="48" alt="{{ seeker.organization_name or seeker.username }}">
+                                        {% else %}
+                                            <div class="company-avatar rounded-circle me-3 bg-primary d-flex align-items-center justify-content-center text-white" style="width: 48px; height: 48px; font-size: 24px;">
+                                                {% if seeker.organization_name %}
+                                                    {{ seeker.organization_name[0] }}
+                                                {% else %}
+                                                    {{ seeker.username[0] }}
+                                                {% endif %}
+                                            </div>
+                                        {% endif %}
+                                        <div>
+                                            <h5 class="card-title mb-0">
+                                                {% if seeker.organization_name %}
+                                                    {{ seeker.organization_name }}
+                                                {% elif seeker.first_name and seeker.last_name %}
+                                                    {{ seeker.first_name }} {{ seeker.last_name }}
+                                                {% else %}
+                                                    {{ seeker.username }}
+                                                {% endif %}
+                                            </h5>
+                                            <small class="text-muted">{{ seeker.sector or seeker.organization_type }}</small>
+                                        </div>
+                                    </div>
+                                    {% if seeker.rating > 0 %}
+                                        <div class="text-warning">
+                                            <i class="fas fa-star"></i>
+                                            <span class="ms-1">{{ "%.1f"|format(seeker.rating) }}</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text">{{ seeker.bio|truncate(100) if seeker.bio else "No description available." }}</p>
+                                    
+                                    <div class="metrics">
+                                        {% if seeker.events|length > 0 %}
+                                            <div class="metric">
+                                                <i class="fas fa-calendar-alt"></i>
+                                                <span>{{ seeker.events|length }} Events</span>
+                                            </div>
+                                        {% endif %}
+                                        <div class="metric">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            <span>{{ seeker.location if seeker.location else "Location not specified" }}</span>
+                                        </div>
+                                    </div>
+                                    
+                                    {% if seeker.events|length > 0 %}
+                                        <div class="mt-3">
+                                            <p class="mb-2"><strong>Recent Events:</strong></p>
+                                            <ul class="list-unstyled">
+                                                {% for event in seeker.events[:2]|sort(attribute='created_at', reverse=True) %}
+                                                    <li class="mb-1">
+                                                        <i class="fas fa-calendar-check me-2 text-primary"></i>
+                                                        <a href="{{ url_for('event_details', event_id=event.id) }}">{{ event.title }}</a>
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                    {% endif %}
+                                    
+                                    <a href="{{ url_for('profile', username=seeker.username) }}" class="btn btn-primary w-100 mt-3">View Profile</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                {% if type_seekers|length > 6 %}
+                    <div class="text-center mt-3">
+                        <a href="{{ url_for('find_seekers', seeker_type=type) }}" class="btn btn-outline-primary">View All {{ type|title }} Partners</a>
+                    </div>
+                {% endif %}
+            </section>
+        {% endfor %}
+    {% else %}
+        <!-- Filtered results -->
+        <div class="mb-4">
+            <h2>Search Results</h2>
+            <p>Found {{ pagination.total }} educational partners{% if query or seeker_type or sector or location %} matching your criteria{% endif %}</p>
+        </div>
+        
+        {% if seekers %}
+            <div class="row g-4">
+                {% for seeker in seekers %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 sponsor-card">
+                            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center">
+                                    {% if seeker.profile_picture %}
+                                        <img src="{{ seeker.profile_picture }}" class="rounded-circle me-3" width="48" height="48" alt="{{ seeker.organization_name or seeker.username }}">
+                                    {% else %}
+                                        <div class="company-avatar rounded-circle me-3 bg-primary d-flex align-items-center justify-content-center text-white" style="width: 48px; height: 48px; font-size: 24px;">
+                                            {% if seeker.organization_name %}
+                                                {{ seeker.organization_name[0] }}
+                                            {% else %}
+                                                {{ seeker.username[0] }}
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+                                    <div>
+                                        <h5 class="card-title mb-0">
+                                            {% if seeker.organization_name %}
+                                                {{ seeker.organization_name }}
+                                            {% elif seeker.first_name and seeker.last_name %}
+                                                {{ seeker.first_name }} {{ seeker.last_name }}
+                                            {% else %}
+                                                {{ seeker.username }}
+                                            {% endif %}
+                                        </h5>
+                                        <small class="text-muted">{{ seeker.sector or seeker.organization_type }}</small>
+                                    </div>
+                                </div>
+                                {% if seeker.rating > 0 %}
+                                    <div class="text-warning">
+                                        <i class="fas fa-star"></i>
+                                        <span class="ms-1">{{ "%.1f"|format(seeker.rating) }}</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text">{{ seeker.bio|truncate(100) if seeker.bio else "No description available." }}</p>
+                                
+                                <div class="metrics">
+                                    {% if seeker.events|length > 0 %}
+                                        <div class="metric">
+                                            <i class="fas fa-calendar-alt"></i>
+                                            <span>{{ seeker.events|length }} Events</span>
+                                        </div>
+                                    {% endif %}
+                                    <div class="metric">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span>{{ seeker.location if seeker.location else "Location not specified" }}</span>
+                                    </div>
+                                </div>
+                                
+                                {% if seeker.events|length > 0 %}
+                                    <div class="mt-3">
+                                        <p class="mb-2"><strong>Recent Events:</strong></p>
+                                        <ul class="list-unstyled">
+                                            {% for event in seeker.events[:2]|sort(attribute='created_at', reverse=True) %}
+                                                <li class="mb-1">
+                                                    <i class="fas fa-calendar-check me-2 text-primary"></i>
+                                                    <a href="{{ url_for('event_details', event_id=event.id) }}">{{ event.title }}</a>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                {% endif %}
+                                
+                                <a href="{{ url_for('profile', username=seeker.username) }}" class="btn btn-primary w-100 mt-3">View Profile</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            {% if pagination.pages > 1 %}
+                <nav class="mt-5">
+                    <ul class="pagination justify-content-center">
+                        {% if pagination.has_prev %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('find_seekers', page=pagination.prev_num, query=query, seeker_type=seeker_type, sector=sector, location=location, sort_by=sort_by) }}">Previous</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">Previous</a>
+                            </li>
+                        {% endif %}
+                        
+                        {% for page_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                            {% if page_num %}
+                                {% if page_num == pagination.page %}
+                                    <li class="page-item active">
+                                        <a class="page-link" href="#">{{ page_num }}</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ url_for('find_seekers', page=page_num, query=query, seeker_type=seeker_type, sector=sector, location=location, sort_by=sort_by) }}">{{ page_num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#">...</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if pagination.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('find_seekers', page=pagination.next_num, query=query, seeker_type=seeker_type, sector=sector, location=location, sort_by=sort_by) }}">Next</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">Next</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-search mb-3"></i>
+                <h4>No educational partners found</h4>
+                <p>Try adjusting your search criteria or filters to find more partners.</p>
+            </div>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %} 

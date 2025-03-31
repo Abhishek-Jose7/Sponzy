@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block title %}How It Works - EduSponsor+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section py-5 bg-light">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6" data-aos="fade-right">
+                <h1 class="display-4 fw-bold mb-4">How EduSponsor+ Works</h1>
+                <p class="lead mb-4">Learn how our platform connects education seekers with generous sponsors to make dreams come true.</p>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <img src="{{ url_for('static', filename='images/how-it-works.svg') }}" alt="How It Works" class="img-fluid">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Process Steps -->
+<section class="process-section py-5">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Step 1 -->
+            <div class="col-md-6" data-aos="fade-up">
+                <div class="process-card">
+                    <div class="step-number">1</div>
+                    <h3>Choose Your Role</h3>
+                    <p>Start by selecting whether you're an education seeker or a sponsor. This helps us tailor your experience to your specific needs.</p>
+                    <ul class="process-list">
+                        <li>Education Seeker: Looking for financial support for your education</li>
+                        <li>Sponsor: Wanting to support students' educational journey</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Step 2 -->
+            <div class="col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="process-card">
+                    <div class="step-number">2</div>
+                    <h3>Create Your Profile</h3>
+                    <p>Set up your profile with relevant information to help us match you with the right opportunities.</p>
+                    <ul class="process-list">
+                        <li>Personal information and background</li>
+                        <li>Educational goals and aspirations</li>
+                        <li>Financial needs and requirements</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Step 3 -->
+            <div class="col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="process-card">
+                    <div class="step-number">3</div>
+                    <h3>Connect with Matches</h3>
+                    <p>Our platform matches you with compatible profiles based on your preferences and requirements.</p>
+                    <ul class="process-list">
+                        <li>Browse through potential matches</li>
+                        <li>Review profiles and requirements</li>
+                        <li>Initiate conversations</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Step 4 -->
+            <div class="col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="process-card">
+                    <div class="step-number">4</div>
+                    <h3>Build Relationships</h3>
+                    <p>Establish meaningful connections and work together to achieve educational goals.</p>
+                    <ul class="process-list">
+                        <li>Communicate through our secure platform</li>
+                        <li>Track progress and milestones</li>
+                        <li>Share updates and achievements</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="section-title">Platform Features</h2>
+            <p class="section-subtitle">Everything you need to succeed</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-card">
+                    <div class="icon-box">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Secure Platform</h3>
+                    <p>Your data and communications are protected with industry-standard security measures.</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-card">
+                    <div class="icon-box">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3>Direct Communication</h3>
+                    <p>Connect directly with your matches through our built-in messaging system.</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-card">
+                    <div class="icon-box">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Progress Tracking</h3>
+                    <p>Monitor your educational journey and sponsorship progress in real-time.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="faq-section py-5">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <p class="section-subtitle">Find answers to common questions</p>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="accordion" id="faqAccordion">
+                    <!-- FAQ Item 1 -->
+                    <div class="accordion-item" data-aos="fade-up">
+                        <h3 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                How does the matching process work?
+                            </button>
+                        </h3>
+                        <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Our platform uses advanced algorithms to match education seekers with sponsors based on various factors including educational goals, financial needs, and sponsor preferences. The matching process considers both parties' requirements to ensure compatible connections.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- FAQ Item 2 -->
+                    <div class="accordion-item" data-aos="fade-up" data-aos-delay="100">
+                        <h3 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                Is my information secure?
+                            </button>
+                        </h3>
+                        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Yes, we take security seriously. All personal information is encrypted and stored securely. We use industry-standard security measures to protect your data and communications.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- FAQ Item 3 -->
+                    <div class="accordion-item" data-aos="fade-up" data-aos-delay="200">
+                        <h3 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                What happens after a match is made?
+                            </button>
+                        </h3>
+                        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Once a match is made, both parties can communicate through our secure platform. You can discuss details, share documents, and track progress. Our platform provides tools to manage the sponsorship relationship effectively.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8" data-aos="fade-right">
+                <h2 class="mb-4">Ready to Get Started?</h2>
+                <p class="mb-0">Join our community and begin your educational journey today.</p>
+            </div>
+            <div class="col-lg-4 text-lg-end" data-aos="fade-left">
+                <a href="{{ url_for('choose_role') }}" class="btn btn-light btn-lg">Sign Up Now</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %} 

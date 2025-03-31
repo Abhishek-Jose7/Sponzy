@@ -1,0 +1,551 @@
+{% extends "base.html" %}
+
+{% block title %}Sponzy - Connecting Education with Sponsors{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 fade-in-up">
+                <h1 class="mb-4">Find perfect <span class="text-gradient">sponsors</span> for your educational needs</h1>
+                <p class="lead mb-4">Sponzy connects educational institutions with sponsors who want to make a difference in education.</p>
+                <div class="d-flex gap-3">
+                    <a href="{{ url_for('signup') }}" class="btn btn-primary btn-lg">Get Started</a>
+                    <a href="{{ url_for('help_center') }}" class="btn btn-outline-primary btn-lg">Learn More</a>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <img src="{{ url_for('static', filename='img/hero-image.svg') }}" alt="Sponzy Hero" class="img-fluid hero-image" style="max-width: 80%;">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2>How <span class="text-gradient">Sponzy</span> Works</h2>
+            <p class="lead">Simple steps to connect with the perfect sponsor</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 feature-card">
+                    <div class="card-body text-center">
+                        <div class="feature-icon bg-light rounded-circle mb-3 mx-auto d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <i class="fas fa-user-plus fa-2x"></i>
+                        </div>
+                        <h5 class="card-title">Create Profile</h5>
+                        <p class="card-text">Set up your educational institution profile with your needs and goals.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 feature-card">
+                    <div class="card-body text-center">
+                        <div class="feature-icon bg-light rounded-circle mb-3 mx-auto d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <i class="fas fa-calendar-plus fa-2x"></i>
+                        </div>
+                        <h5 class="card-title">Create Events</h5>
+                        <p class="card-text">Add your educational events that need sponsorship support.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 feature-card">
+                    <div class="card-body text-center">
+                        <div class="feature-icon bg-light rounded-circle mb-3 mx-auto d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <i class="fas fa-handshake fa-2x"></i>
+                        </div>
+                        <h5 class="card-title">Get Matched</h5>
+                        <p class="card-text">Our algorithm matches you with sponsors who align with your mission.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 feature-card">
+                    <div class="card-body text-center">
+                        <div class="feature-icon bg-light rounded-circle mb-3 mx-auto d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <i class="fas fa-rocket fa-2x"></i>
+                        </div>
+                        <h5 class="card-title">Succeed Together</h5>
+                        <p class="card-text">Build lasting relationships and achieve your educational goals.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- College Events Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2>Popular <span class="text-gradient">Campus Events</span></h2>
+            <p class="lead">Connect with sponsors for your college events</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 event-card">
+                    <div class="card-body text-center">
+                        <div class="feature-icon bg-light rounded-circle mb-3 mx-auto d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <i class="fas fa-laptop-code fa-2x"></i>
+                        </div>
+                        <h5 class="card-title">Hackathons</h5>
+                        <p class="card-text">Connect with tech companies to sponsor your next coding competition.</p>
+                        <a href="{{ url_for('events') }}" class="btn btn-outline-primary mt-3">Explore</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 event-card">
+                    <div class="card-body text-center">
+                        <div class="feature-icon bg-light rounded-circle mb-3 mx-auto d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <i class="fas fa-lightbulb fa-2x"></i>
+                        </div>
+                        <h5 class="card-title">Startup Events</h5>
+                        <p class="card-text">Find investors and mentors for pitch competitions and startup weekends.</p>
+                        <a href="{{ url_for('events') }}" class="btn btn-outline-primary mt-3">Explore</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 event-card">
+                    <div class="card-body text-center">
+                        <div class="feature-icon bg-light rounded-circle mb-3 mx-auto d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <i class="fas fa-music fa-2x"></i>
+                        </div>
+                        <h5 class="card-title">College Festivals</h5>
+                        <p class="card-text">Get sponsors for cultural fests, music concerts and campus celebrations.</p>
+                        <a href="{{ url_for('events') }}" class="btn btn-outline-primary mt-3">Explore</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 event-card">
+                    <div class="card-body text-center">
+                        <div class="feature-icon bg-light rounded-circle mb-3 mx-auto d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <i class="fas fa-chalkboard-teacher fa-2x"></i>
+                        </div>
+                        <h5 class="card-title">Workshops & Seminars</h5>
+                        <p class="card-text">Connect with industry leaders to sponsor educational workshops.</p>
+                        <a href="{{ url_for('events') }}" class="btn btn-outline-primary mt-3">Explore</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-icon primary">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <h3>1,200+</h3>
+                    <p class="text-muted">Educational Institutions</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-icon secondary">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <h3>850+</h3>
+                    <p class="text-muted">Corporate Sponsors</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-icon success">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <h3>3,500+</h3>
+                    <p class="text-muted">Events Sponsored</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-icon warning">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <h3>$15M+</h3>
+                    <p class="text-muted">Sponsorship Value</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2>What Our Users Say</h2>
+            <p class="lead">Success stories from our community</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="testimonial-card p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="{{ url_for('static', filename='img/avatar1.jpg') }}" alt="Avatar" class="rounded-circle me-3" width="60">
+                        <div>
+                            <h5 class="mb-0">Sarah Johnson</h5>
+                            <p class="text-muted mb-0">Principal, Lincoln High</p>
+                        </div>
+                    </div>
+                    <p>"Sponzy helped us secure funding for our STEM program that has transformed our curriculum. The matching algorithm is brilliant!"</p>
+                    <div class="text-warning">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="testimonial-card p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="{{ url_for('static', filename='img/avatar2.jpg') }}" alt="Avatar" class="rounded-circle me-3" width="60">
+                        <div>
+                            <h5 class="mb-0">Michael Chen</h5>
+                            <p class="text-muted mb-0">CSR Director, TechCore Inc</p>
+                        </div>
+                    </div>
+                    <p>"As a sponsor, finding the right educational partners was always challenging until we found Sponzy. Now we can directly impact education in our community."</p>
+                    <div class="text-warning">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="testimonial-card p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="{{ url_for('static', filename='img/avatar3.jpg') }}" alt="Avatar" class="rounded-circle me-3" width="60">
+                        <div>
+                            <h5 class="mb-0">Emma Rodriguez</h5>
+                            <p class="text-muted mb-0">Dean, City University</p>
+                        </div>
+                    </div>
+                    <p>"Our research symposium needed corporate partners who understood our vision. Sponzy connected us with three perfect matches in just one week!"</p>
+                    <div class="text-warning">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section py-5 text-white">
+    <div class="container position-relative">
+        <div class="row justify-content-center text-center">
+            <div class="col-lg-8">
+                <h2 class="mb-4">Ready to find your perfect match?</h2>
+                <p class="lead mb-4">Join thousands of educational institutions and sponsors already using Sponzy.</p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="{{ url_for('signup') }}" class="btn btn-light btn-lg">Sign Up Now</a>
+                    <a href="{{ url_for('contact') }}" class="btn btn-outline-light btn-lg">Contact Us</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style type="text/css">
+/* Hero Section */
+.hero {
+    padding: 6rem 0;
+    background: linear-gradient(135deg, #2C3E50 0%, #3498DB 100%);
+    color: white;
+}
+
+.hero-title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 1rem;
+}
+
+.hero-image {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Stats Section */
+.stats {
+    padding: 4rem 0;
+}
+
+.stat-item {
+    padding: 2rem;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #3498DB;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    font-size: 1.1rem;
+    color: #666;
+}
+
+/* Features Section */
+.features {
+    padding: 6rem 0;
+}
+
+.section-title {
+    margin-bottom: 3rem;
+    font-weight: 700;
+}
+
+.feature-card {
+    text-align: center;
+    padding: 2rem;
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+}
+
+.feature-icon {
+    font-size: 2.5rem;
+    color: #3498DB;
+    margin-bottom: 1.5rem;
+}
+
+.feature-card h3 {
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+/* Event Cards */
+.event-card {
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.event-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+}
+
+.event-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+}
+
+.event-card:nth-child(1)::after {
+    background: linear-gradient(to right, #4361ee, #3a56d4);
+}
+
+.event-card:nth-child(2)::after {
+    background: linear-gradient(to right, #ff6b6b, #e05555);
+}
+
+.event-card:nth-child(3)::after {
+    background: linear-gradient(to right, #4cd964, #36b04a);
+}
+
+.event-card:nth-child(4)::after {
+    background: linear-gradient(to right, #8557ee, #6a49c5);
+}
+
+/* Featured Projects */
+.featured-projects {
+    padding: 6rem 0;
+}
+
+.project-card {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+    transition: transform 0.3s ease;
+}
+
+.project-card:hover {
+    transform: translateY(-5px);
+}
+
+.project-image img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.project-content {
+    padding: 1.5rem;
+}
+
+.project-meta {
+    display: flex;
+    gap: 1rem;
+    color: #666;
+    font-size: 0.9rem;
+    margin: 1rem 0;
+}
+
+.project-progress {
+    margin: 1rem 0;
+}
+
+.progress {
+    height: 8px;
+    margin-bottom: 0.5rem;
+}
+
+.progress-stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* Testimonials */
+.testimonials {
+    padding: 6rem 0;
+}
+
+.testimonial-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.testimonial-content {
+    font-style: italic;
+    margin-bottom: 1.5rem;
+}
+
+.testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.testimonial-author img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.author-info h4 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.author-info p {
+    margin: 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* CTA Section */
+.cta {
+    padding: 4rem 0;
+    background: linear-gradient(135deg, #3498DB 0%, #2C3E50 100%);
+}
+
+.cta h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.cta p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+}
+
+.cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero {
+        padding: 4rem 0;
+    }
+
+    .hero-title {
+        font-size: 2.5rem;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+    }
+
+    .hero-image {
+        margin-top: 2rem;
+    }
+
+    .stat-item {
+        margin-bottom: 2rem;
+    }
+
+    .feature-card {
+        margin-bottom: 2rem;
+    }
+
+    .cta-buttons {
+        flex-direction: column;
+    }
+}
+</style>
+{% endblock %} 

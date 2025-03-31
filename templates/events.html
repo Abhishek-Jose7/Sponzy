@@ -1,0 +1,405 @@
+{% extends "base.html" %}
+
+{% block title %}Events{% endblock %}
+
+{% block extra_css %}
+<style>
+    .events-page {
+        padding: 4rem 0;
+    }
+    
+    .page-header {
+        margin-bottom: 3rem;
+    }
+    
+    .page-title {
+        font-size: 2.5rem;
+        color: #333;
+        margin-bottom: 1rem;
+    }
+    
+    .page-description {
+        color: #666;
+        font-size: 1.1rem;
+        max-width: 600px;
+    }
+    
+    .search-filters {
+        background: white;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+    
+    .search-box {
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+    
+    .search-input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        padding-left: 3rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+    }
+    
+    .search-input:focus {
+        border-color: var(--primary-color);
+        outline: none;
+    }
+    
+    .search-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #666;
+    }
+    
+    .filters-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+    
+    .filter-group {
+        margin-bottom: 1rem;
+    }
+    
+    .filter-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #333;
+        font-weight: 500;
+    }
+    
+    .filter-select {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        color: #333;
+    }
+    
+    .filter-select:focus {
+        border-color: var(--primary-color);
+        outline: none;
+    }
+    
+    .events-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+    
+    .event-card {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease;
+    }
+    
+    .event-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .event-image {
+        height: 200px;
+        background-size: cover;
+        background-position: center;
+    }
+    
+    .event-content {
+        padding: 1.5rem;
+    }
+    
+    .event-category {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        background: var(--primary-color);
+        color: white;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .event-title {
+        font-size: 1.25rem;
+        color: #333;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+    
+    .event-meta {
+        display: flex;
+        gap: 1rem;
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+    
+    .event-progress {
+        height: 6px;
+        background: #eee;
+        border-radius: 3px;
+        overflow: hidden;
+        margin-bottom: 0.5rem;
+    }
+    
+    .event-progress-bar {
+        height: 100%;
+        background: var(--primary-color);
+        transition: width 0.3s ease;
+    }
+    
+    .event-funding {
+        display: flex;
+        justify-content: space-between;
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+    
+    .event-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .organizer-info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .organizer-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    
+    .organizer-name {
+        font-size: 0.9rem;
+        color: #666;
+    }
+    
+    .pagination {
+        margin-top: 3rem;
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+    
+    .page-link {
+        padding: 0.5rem 1rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        color: #333;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .page-link:hover {
+        background: #f8f9fa;
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+    }
+    
+    .page-link.active {
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+        color: white;
+    }
+    
+    .no-events {
+        text-align: center;
+        padding: 4rem 0;
+    }
+    
+    .no-events-icon {
+        font-size: 3rem;
+        color: #ddd;
+        margin-bottom: 1rem;
+    }
+    
+    .no-events-text {
+        color: #666;
+        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    @media (max-width: 768px) {
+        .filters-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="events-page">
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Events</h1>
+            <p class="page-description">Browse through educational events looking for sponsorship opportunities.</p>
+        </div>
+        
+        <!-- Search and Filters -->
+        <div class="search-filters">
+            <form id="searchForm" method="GET" action="{{ url_for('events') }}">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" name="q" placeholder="Search events..." value="{{ request.args.get('q', '') }}">
+                </div>
+                
+                <div class="filters-grid">
+                    <div class="filter-group">
+                        <label class="filter-label" for="category">Category</label>
+                        <select class="filter-select" id="category" name="category">
+                            <option value="">All Categories</option>
+                            {% for category in categories %}
+                            <option value="{{ category.id }}" {% if request.args.get('category') == category.id|string %}selected{% endif %}>
+                                {{ category.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label" for="location">Location</label>
+                        <select class="filter-select" id="location" name="location">
+                            <option value="">All Locations</option>
+                            {% for location in locations %}
+                            <option value="{{ location }}" {% if request.args.get('location') == location %}selected{% endif %}>
+                                {{ location }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label" for="date">Date</label>
+                        <select class="filter-select" id="date" name="date">
+                            <option value="">Any Date</option>
+                            <option value="upcoming" {% if request.args.get('date') == 'upcoming' %}selected{% endif %}>Upcoming</option>
+                            <option value="this_month" {% if request.args.get('date') == 'this_month' %}selected{% endif %}>This Month</option>
+                            <option value="next_month" {% if request.args.get('date') == 'next_month' %}selected{% endif %}>Next Month</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label" for="funding">Funding Status</label>
+                        <select class="filter-select" id="funding" name="funding">
+                            <option value="">All Status</option>
+                            <option value="open" {% if request.args.get('funding') == 'open' %}selected{% endif %}>Open for Funding</option>
+                            <option value="funded" {% if request.args.get('funding') == 'funded' %}selected{% endif %}>Fully Funded</option>
+                            <option value="ending_soon" {% if request.args.get('funding') == 'ending_soon' %}selected{% endif %}>Ending Soon</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="text-end mt-3">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-filter me-2"></i>Apply Filters
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Events Grid -->
+        {% if events %}
+        <div class="events-grid">
+            {% for event in events %}
+            <div class="event-card">
+                <div class="event-image" style="background-image: url('{{ event.featured_image or url_for('static', filename='images/default-event.jpg') }}')"></div>
+                <div class="event-content">
+                    <div class="event-category">{{ event.category }}</div>
+                    <h3 class="event-title">{{ event.title }}</h3>
+                    <div class="event-meta">
+                        <span><i class="fas fa-calendar me-1"></i> {{ event.date|date }}</span>
+                        <span><i class="fas fa-map-marker-alt me-1"></i> {{ event.location }}</span>
+                    </div>
+                    <div class="event-progress">
+                        <div class="event-progress-bar" style="width: {{ (event.current_funding / event.funding_goal * 100)|round }}%"></div>
+                    </div>
+                    <div class="event-funding">
+                        <span>${{ event.current_funding|number_format }} raised</span>
+                        <span>${{ event.funding_goal|number_format }} goal</span>
+                    </div>
+                    <div class="event-footer">
+                        <div class="organizer-info">
+                            <img src="{{ event.organizer.avatar or url_for('static', filename='images/default-avatar.png') }}" 
+                                 alt="{{ event.organizer.username }}" class="organizer-avatar">
+                            <span class="organizer-name">{{ event.organizer.username }}</span>
+                        </div>
+                        <a href="{{ url_for('event_details', event_id=event.id) }}" class="btn btn-sm btn-outline-primary">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        {% if pagination %}
+        <div class="pagination">
+            {% if pagination.has_prev %}
+            <a href="{{ url_for('events', page=pagination.prev_num, **request.args) }}" class="page-link">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+            {% endif %}
+            
+            {% for page in pagination.iter_pages() %}
+                {% if page %}
+                    <a href="{{ url_for('events', page=page, **request.args) }}" 
+                       class="page-link {% if page == pagination.page %}active{% endif %}">
+                        {{ page }}
+                    </a>
+                {% else %}
+                    <span class="page-link">...</span>
+                {% endif %}
+            {% endfor %}
+            
+            {% if pagination.has_next %}
+            <a href="{{ url_for('events', page=pagination.next_num, **request.args) }}" class="page-link">
+                <i class="fas fa-chevron-right"></i>
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+        {% else %}
+        <div class="no-events">
+            <i class="fas fa-calendar-alt no-events-icon"></i>
+            <p class="no-events-text">No events found matching your criteria.</p>
+            <a href="{{ url_for('events') }}" class="btn btn-primary">
+                <i class="fas fa-sync me-2"></i>Reset Filters
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('searchForm');
+    const filterSelects = form.querySelectorAll('.filter-select');
+    
+    // Auto-submit form when filters change
+    filterSelects.forEach(select => {
+        select.addEventListener('change', function() {
+            form.submit();
+        });
+    });
+});
+</script>
+{% endblock %} 

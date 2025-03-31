@@ -1,0 +1,540 @@
+{% extends "base.html" %}
+
+{% block title %}Create Event{% endblock %}
+
+{% block extra_css %}
+<style>
+    .create-event-page {
+        padding: 4rem 0;
+    }
+    
+    .page-header {
+        margin-bottom: 3rem;
+    }
+    
+    .page-title {
+        font-size: 2.5rem;
+        color: #333;
+        margin-bottom: 1rem;
+    }
+    
+    .page-description {
+        color: #666;
+        font-size: 1.1rem;
+        max-width: 600px;
+    }
+    
+    .event-form {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 8px;
+        padding: 2rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+    
+    .form-section {
+        margin-bottom: 2rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .form-section:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+    
+    .section-title {
+        font-size: 1.25rem;
+        color: #333;
+        margin-bottom: 1.5rem;
+        font-weight: 500;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #333;
+        font-weight: 500;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+    }
+    
+    .form-control:focus {
+        border-color: var(--primary-color);
+        outline: none;
+    }
+    
+    .form-text {
+        color: #666;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+    
+    .form-error {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+        display: none;
+    }
+    
+    .form-error.show {
+        display: block;
+    }
+    
+    .image-upload {
+        border: 2px dashed #ddd;
+        border-radius: 4px;
+        padding: 2rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .image-upload:hover {
+        border-color: var(--primary-color);
+        background: #f8f9fa;
+    }
+    
+    .image-upload i {
+        font-size: 2rem;
+        color: #666;
+        margin-bottom: 1rem;
+    }
+    
+    .image-preview {
+        display: none;
+        margin-top: 1rem;
+    }
+    
+    .image-preview img {
+        max-width: 100%;
+        max-height: 200px;
+        border-radius: 4px;
+    }
+    
+    .image-preview.show {
+        display: block;
+    }
+    
+    .remove-image {
+        display: none;
+        margin-top: 0.5rem;
+    }
+    
+    .remove-image.show {
+        display: inline-block;
+    }
+    
+    .btn-submit {
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 4px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-submit:hover {
+        background: #357abd;
+        transform: translateY(-2px);
+    }
+    
+    .btn-submit:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+    }
+    
+    .form-check {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .form-check-input {
+        width: 1.25rem;
+        height: 1.25rem;
+        margin: 0;
+    }
+    
+    .form-check-label {
+        color: #666;
+        font-size: 0.9rem;
+    }
+    
+    .tags-input {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        padding: 0.5rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        min-height: 42px;
+    }
+    
+    .tag {
+        background: #e9ecef;
+        color: #495057;
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.875rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .tag-remove {
+        cursor: pointer;
+        color: #666;
+    }
+    
+    .tag-remove:hover {
+        color: #dc3545;
+    }
+    
+    .tag-input {
+        border: none;
+        outline: none;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+        flex-grow: 1;
+        min-width: 100px;
+    }
+    
+    @media (max-width: 768px) {
+        .event-form {
+            padding: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="create-event-page">
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Create New Event</h1>
+            <p class="page-description">Fill out the form below to create your educational event and start attracting sponsors.</p>
+        </div>
+        
+        <form id="eventForm" class="event-form" method="POST" action="{{ url_for('create_event') }}" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            
+            <!-- Basic Information -->
+            <div class="form-section">
+                <h2 class="section-title">Basic Information</h2>
+                
+                <div class="form-group">
+                    <label class="form-label" for="title">Event Title</label>
+                    <input type="text" class="form-control" id="title" name="title" required>
+                    <div class="form-error" id="titleError"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="category">Category</label>
+                    <select class="form-control" id="category" name="category" required>
+                        <option value="">Select a category</option>
+                        {% for category in categories %}
+                        <option value="{{ category.id }}">{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="form-error" id="categoryError"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="description">Event Description</label>
+                    <textarea class="form-control" id="description" name="description" rows="5" required></textarea>
+                    <div class="form-text">Provide a detailed description of your event, including its purpose, target audience, and expected outcomes.</div>
+                    <div class="form-error" id="descriptionError"></div>
+                </div>
+            </div>
+            
+            <!-- Event Details -->
+            <div class="form-section">
+                <h2 class="section-title">Event Details</h2>
+                
+                <div class="form-group">
+                    <label class="form-label" for="date">Event Date</label>
+                    <input type="date" class="form-control" id="date" name="date" required>
+                    <div class="form-error" id="dateError"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="time">Event Time</label>
+                    <input type="time" class="form-control" id="time" name="time" required>
+                    <div class="form-error" id="timeError"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="location">Location</label>
+                    <input type="text" class="form-control" id="location" name="location" required>
+                    <div class="form-text">Enter the full address or venue name where the event will take place.</div>
+                    <div class="form-error" id="locationError"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="capacity">Expected Capacity</label>
+                    <input type="number" class="form-control" id="capacity" name="capacity" min="1" required>
+                    <div class="form-text">Enter the expected number of attendees.</div>
+                    <div class="form-error" id="capacityError"></div>
+                </div>
+            </div>
+            
+            <!-- Funding Information -->
+            <div class="form-section">
+                <h2 class="section-title">Funding Information</h2>
+                
+                <div class="form-group">
+                    <label class="form-label" for="funding_goal">Funding Goal</label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        <input type="number" class="form-control" id="funding_goal" name="funding_goal" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-text">Enter the total amount of funding needed for your event.</div>
+                    <div class="form-error" id="funding_goalError"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="deadline">Funding Deadline</label>
+                    <input type="date" class="form-control" id="deadline" name="deadline" required>
+                    <div class="form-text">Set a deadline for when you need to receive the funding.</div>
+                    <div class="form-error" id="deadlineError"></div>
+                </div>
+            </div>
+            
+            <!-- Media -->
+            <div class="form-section">
+                <h2 class="section-title">Media</h2>
+                
+                <div class="form-group">
+                    <label class="form-label">Featured Image</label>
+                    <div class="image-upload" id="imageUpload">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Click to upload or drag and drop</p>
+                        <input type="file" id="featured_image" name="featured_image" accept="image/*" class="d-none">
+                    </div>
+                    <div class="image-preview" id="imagePreview">
+                        <img src="" alt="Preview">
+                        <div class="remove-image" id="removeImage">
+                            <i class="fas fa-trash-alt"></i> Remove Image
+                        </div>
+                    </div>
+                    <div class="form-text">Upload a high-quality image that represents your event (recommended size: 1200x630px)</div>
+                    <div class="form-error" id="featured_imageError"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="tags">Tags</label>
+                    <div class="tags-input" id="tagsInput">
+                        <input type="text" class="tag-input" id="tagInput" placeholder="Add tags...">
+                    </div>
+                    <input type="hidden" name="tags" id="tags">
+                    <div class="form-text">Add relevant tags to help sponsors find your event (e.g., education, technology, sports)</div>
+                    <div class="form-error" id="tagsError"></div>
+                </div>
+            </div>
+            
+            <!-- Additional Information -->
+            <div class="form-section">
+                <h2 class="section-title">Additional Information</h2>
+                
+                <div class="form-group">
+                    <label class="form-label" for="website">Event Website</label>
+                    <input type="url" class="form-control" id="website" name="website">
+                    <div class="form-text">If you have a dedicated website for the event, enter its URL.</div>
+                    <div class="form-error" id="websiteError"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="social_media">Social Media Links</label>
+                    <input type="text" class="form-control" id="social_media" name="social_media" placeholder="Facebook, Twitter, Instagram, etc.">
+                    <div class="form-text">Enter your social media handles or links, separated by commas.</div>
+                    <div class="form-error" id="social_mediaError"></div>
+                </div>
+                
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="terms" name="terms" required>
+                    <label class="form-check-label" for="terms">
+                        I agree to the <a href="{{ url_for('terms') }}" target="_blank">Terms of Service</a> and <a href="{{ url_for('privacy') }}" target="_blank">Privacy Policy</a>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="text-end">
+                <button type="submit" class="btn-submit" id="submitBtn">
+                    <i class="fas fa-plus me-2"></i>Create Event
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('eventForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const imageUpload = document.getElementById('imageUpload');
+    const featuredImage = document.getElementById('featured_image');
+    const imagePreview = document.getElementById('imagePreview');
+    const removeImage = document.getElementById('removeImage');
+    const tagInput = document.getElementById('tagInput');
+    const tagsInput = document.getElementById('tagsInput');
+    const tagsHidden = document.getElementById('tags');
+    
+    // Image upload handling
+    imageUpload.addEventListener('click', function() {
+        featuredImage.click();
+    });
+    
+    imageUpload.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        this.style.borderColor = var(--primary-color);
+    });
+    
+    imageUpload.addEventListener('dragleave', function() {
+        this.style.borderColor = '#ddd';
+    });
+    
+    imageUpload.addEventListener('drop', function(e) {
+        e.preventDefault();
+        this.style.borderColor = '#ddd';
+        
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) {
+            featuredImage.files = e.dataTransfer.files;
+            handleImagePreview(file);
+        }
+    });
+    
+    featuredImage.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            handleImagePreview(file);
+        }
+    });
+    
+    removeImage.addEventListener('click', function() {
+        featuredImage.value = '';
+        imagePreview.classList.remove('show');
+        removeImage.classList.remove('show');
+    });
+    
+    function handleImagePreview(file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            imagePreview.querySelector('img').src = e.target.result;
+            imagePreview.classList.add('show');
+            removeImage.classList.add('show');
+        };
+        reader.readAsDataURL(file);
+    }
+    
+    // Tags handling
+    const tags = new Set();
+    
+    tagInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ',') {
+            e.preventDefault();
+            const tag = this.value.trim();
+            if (tag && !tags.has(tag)) {
+                addTag(tag);
+                this.value = '';
+            }
+        }
+    });
+    
+    function addTag(tag) {
+        tags.add(tag);
+        const tagElement = document.createElement('div');
+        tagElement.className = 'tag';
+        tagElement.innerHTML = `
+            ${tag}
+            <span class="tag-remove" data-tag="${tag}">
+                <i class="fas fa-times"></i>
+            </span>
+        `;
+        tagsInput.insertBefore(tagElement, tagInput);
+        updateTagsHidden();
+    }
+    
+    tagsInput.addEventListener('click', function(e) {
+        if (e.target.closest('.tag-remove')) {
+            const tag = e.target.closest('.tag-remove').dataset.tag;
+            tags.delete(tag);
+            e.target.closest('.tag').remove();
+            updateTagsHidden();
+        }
+    });
+    
+    function updateTagsHidden() {
+        tagsHidden.value = Array.from(tags).join(',');
+    }
+    
+    // Form submission
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Reset error messages
+        document.querySelectorAll('.form-error').forEach(error => {
+            error.classList.remove('show');
+        });
+        
+        // Disable submit button
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating Event...';
+        
+        try {
+            const formData = new FormData(form);
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok) {
+                // Redirect to event details page
+                window.location.href = data.redirect_url;
+            } else {
+                // Show error messages
+                if (data.errors) {
+                    Object.keys(data.errors).forEach(field => {
+                        const errorElement = document.getElementById(`${field}Error`);
+                        if (errorElement) {
+                            errorElement.textContent = data.errors[field];
+                            errorElement.classList.add('show');
+                        }
+                    });
+                } else {
+                    alert('An error occurred. Please try again later.');
+                }
+            }
+        } catch (error) {
+            alert('An error occurred. Please try again later.');
+        } finally {
+            // Re-enable submit button
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-plus me-2"></i>Create Event';
+        }
+    });
+});
+</script>
+{% endblock %} 

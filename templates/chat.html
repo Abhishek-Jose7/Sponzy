@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Chat{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Chat List Sidebar -->
+        <div class="col-md-4 col-lg-3 chat-sidebar">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Conversations</h5>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="chat-list">
+                        {% for chat in chats %}
+                        <li class="chat-item {% if current_chat_user and current_chat_user.id == chat[0].id %}active{% endif %}">
+                            <a href="{{ url_for('chat', user_id=chat[0].id) }}" class="d-flex align-items-center text-decoration-none text-dark">
+                                <img src="{{ chat[0].profile_picture or url_for('static', filename='images/default-avatar.svg') }}" 
+                                     alt="{{ chat[0].username }}" 
+                                     class="chat-avatar">
+                                <div class="chat-info">
+                                    <div class="chat-name">{{ chat[0].username }}</div>
+                                    <div class="chat-preview">
+                                        {% if chat[0].messages %}
+                                            {{ chat[0].messages[-1].content[:50] }}{% if chat[0].messages[-1].content|length > 50 %}...{% endif %}
+                                        {% else %}
+                                            No messages yet
+                                        {% endif %}
+                                    </div>
+                                    {% if chat[1] > 0 %}
+                                    <span class="badge bg-danger">{{ chat[1] }}</span>
+                                    {% endif %}
+                                </div>
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Window -->
+        <div class="col-md-8 col-lg-9 chat-window">
+            {% if current_chat_user %}
+            <div class="card chat-container">
+                <div class="card-header">
+                    <div class="d-flex align-items-center">
+                        <img src="{{ current_chat_user.profile_picture or url_for('static', filename='images/default-avatar.svg') }}" 
+                             alt="{{ current_chat_user.username }}" 
+                             class="chat-avatar me-3">
+                        <div>
+                            <h5 class="mb-0">{{ current_chat_user.username }}</h5>
+                            <small class="text-muted">{% if current_chat_user.online %}Online{% else %}Offline{% endif %}</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="messages-container" id="messages-container">
+                    {% for message in messages %}
+                    <div class="message {% if message.sender_id == current_user.id %}sent{% else %}received{% endif %}">
+                        <div class="message-content">
+                            <div class="message-username">{{ message.sender.username }}</div>
+                            <div class="message-text">{{ message.content }}</div>
+                            <div class="message-time">{{ message.created_at.strftime('%I:%M %p') }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    <div id="typing-indicator" class="typing-indicator"></div>
+                </div>
+
+                <form id="message-form" class="message-form">
+                    <input type="text" 
+                           id="message-input" 
+                           class="message-input" 
+                           placeholder="Type your message..."
+                           autocomplete="off">
+                    <button type="submit" class="send-button">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+            {% else %}
+            <div class="text-center mt-5">
+                <h3>Select a conversation to start chatting</h3>
+                <p class="text-muted">Choose a user from the sidebar to begin messaging</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Toast container for notifications -->
+<div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+<script>
+    // Pass user data to JavaScript
+    const currentUserId = "{{ current_user.id }}";
+    const currentChatUserId = "{% if current_chat_user %}{{ current_chat_user.id }}{% else %}null{% endif %}";
+</script>
+<script src="{{ url_for('static', filename='js/socket.js') }}"></script>
+<script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+{% endblock %} 

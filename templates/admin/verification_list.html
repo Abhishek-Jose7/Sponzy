@@ -1,0 +1,366 @@
+{% extends "base.html" %}
+
+{% block title %}Organization Verifications - EduSponsor+{% endblock %}
+
+{% block extra_css %}
+<style>
+:root {
+    --primary-gradient: linear-gradient(135deg, #2C3E50 0%, #3498DB 100%);
+    --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    --input-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.verifications-wrapper {
+    min-height: calc(100vh - 80px);
+    background: var(--primary-gradient);
+    padding: 4rem 0;
+}
+
+.verifications-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2.5rem;
+    background: white;
+    border-radius: 20px;
+    box-shadow: var(--card-shadow);
+}
+
+.verifications-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.verifications-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2C3E50;
+    margin-bottom: 0.5rem;
+}
+
+.verifications-header p {
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.filters {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 12px;
+}
+
+.filter-group {
+    flex: 1;
+}
+
+.filter-group label {
+    display: block;
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.filter-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #eee;
+    border-radius: 8px;
+    background: white;
+    color: #2C3E50;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-group select:focus {
+    border-color: #3498DB;
+    box-shadow: var(--input-shadow);
+    outline: none;
+}
+
+.verifications-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 1rem;
+}
+
+.verifications-table th {
+    padding: 1rem;
+    text-align: left;
+    color: #666;
+    font-weight: 600;
+    border-bottom: 2px solid #eee;
+}
+
+.verifications-table td {
+    padding: 1.5rem 1rem;
+    background: white;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+}
+
+.verifications-table td:first-child {
+    border-left: 1px solid #eee;
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+}
+
+.verifications-table td:last-child {
+    border-right: 1px solid #eee;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+.verifications-table tr {
+    transition: all 0.3s ease;
+}
+
+.verifications-table tr:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--input-shadow);
+}
+
+.org-name {
+    color: #2C3E50;
+    font-weight: 600;
+}
+
+.org-email {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.status-pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-approved {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-rejected {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.btn-review {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    background: var(--primary-gradient);
+    border: none;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-review:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--input-shadow);
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 2rem;
+}
+
+.page-item {
+    display: inline-block;
+}
+
+.page-link {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    background: #f8f9fa;
+    border: 1px solid #eee;
+    color: #2C3E50;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.page-link:hover {
+    background: #e9ecef;
+}
+
+.page-item.active .page-link {
+    background: var(--primary-gradient);
+    color: white;
+    border-color: transparent;
+}
+
+.page-item.disabled .page-link {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #666;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: #ccc;
+    margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+    color: #2C3E50;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+    color: #666;
+    font-size: 1.1rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="verifications-wrapper">
+    <div class="verifications-container">
+        <div class="verifications-header">
+            <h1>Organization Verifications</h1>
+            <p>Review and manage organization verification requests</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="filters">
+            <div class="filter-group">
+                <label for="status">Status</label>
+                <select id="status" name="status">
+                    <option value="all">All</option>
+                    <option value="pending" {% if status == 'pending' %}selected{% endif %}>Pending</option>
+                    <option value="approved" {% if status == 'approved' %}selected{% endif %}>Approved</option>
+                    <option value="rejected" {% if status == 'rejected' %}selected{% endif %}>Rejected</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="sort">Sort By</label>
+                <select id="sort" name="sort">
+                    <option value="date_desc" {% if sort == 'date_desc' %}selected{% endif %}>Newest First</option>
+                    <option value="date_asc" {% if sort == 'date_asc' %}selected{% endif %}>Oldest First</option>
+                    <option value="name_asc" {% if sort == 'name_asc' %}selected{% endif %}>Organization Name (A-Z)</option>
+                    <option value="name_desc" {% if sort == 'name_desc' %}selected{% endif %}>Organization Name (Z-A)</option>
+                </select>
+            </div>
+        </div>
+
+        {% if verifications %}
+            <table class="verifications-table">
+                <thead>
+                    <tr>
+                        <th>Organization</th>
+                        <th>Submission Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for verification in verifications %}
+                        <tr>
+                            <td>
+                                <div class="org-name">{{ verification.name }}</div>
+                                <div class="org-email">{{ verification.email }}</div>
+                            </td>
+                            <td>{{ verification.verification_submitted_at.strftime('%B %d, %Y') }}</td>
+                            <td>
+                                <span class="status-badge status-{{ verification.verification_status }}">
+                                    {{ verification.verification_status|title }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{{ url_for('admin.verify_organization', user_id=verification.id) }}" class="btn-review">
+                                    Review
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="pagination">
+                {% if pagination.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('admin.verification_list', page=pagination.prev_num) }}">Previous</a>
+                    </li>
+                {% endif %}
+
+                {% for page in pagination.iter_pages() %}
+                    {% if page %}
+                        <li class="page-item {% if page == pagination.page %}active{% endif %}">
+                            <a class="page-link" href="{{ url_for('admin.verification_list', page=page) }}">{{ page }}</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if pagination.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('admin.verification_list', page=pagination.next_num) }}">Next</a>
+                    </li>
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-clipboard-check"></i>
+                <h3>No Verifications Found</h3>
+                <p>There are no organization verification requests matching your filters.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const statusSelect = document.getElementById('status');
+    const sortSelect = document.getElementById('sort');
+    
+    function updateFilters() {
+        const status = statusSelect.value;
+        const sort = sortSelect.value;
+        const currentUrl = new URL(window.location.href);
+        
+        currentUrl.searchParams.set('status', status);
+        currentUrl.searchParams.set('sort', sort);
+        currentUrl.searchParams.delete('page'); // Reset to first page when filters change
+        
+        window.location.href = currentUrl.toString();
+    }
+    
+    statusSelect.addEventListener('change', updateFilters);
+    sortSelect.addEventListener('change', updateFilters);
+});
+</script>
+{% endblock %} 

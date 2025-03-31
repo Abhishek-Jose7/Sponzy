@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block title %}Find Sponsors{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Welcome Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-4">Find Sponsors</h1>
+            <p class="lead">Connect with sponsors who match your event's needs</p>
+        </div>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Filters</h5>
+                </div>
+                <div class="card-body">
+                    <form method="GET" action="{{ url_for('index') }}">
+                        <!-- Industry Filter -->
+                        <div class="mb-4">
+                            <h6 class="mb-3">Industry</h6>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="industry" value="Technology" id="tech">
+                                <label class="form-check-label" for="tech">Technology</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="industry" value="Education" id="edu">
+                                <label class="form-check-label" for="edu">Education</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="industry" value="Healthcare" id="health">
+                                <label class="form-check-label" for="health">Healthcare</label>
+                            </div>
+                        </div>
+
+                        <!-- Budget Filter -->
+                        <div class="mb-4">
+                            <h6 class="mb-3">Budget Range</h6>
+                            <select class="form-select" name="budget">
+                                <option value="">Any Budget</option>
+                                <option value="0-5000">$0 - $5,000</option>
+                                <option value="5000-10000">$5,000 - $10,000</option>
+                                <option value="10000-50000">$10,000 - $50,000</option>
+                                <option value="50000+">$50,000+</option>
+                            </select>
+                        </div>
+
+                        <!-- Location Filter -->
+                        <div class="mb-4">
+                            <h6 class="mb-3">Location</h6>
+                            <input type="text" class="form-control" name="location" placeholder="Enter location">
+                        </div>
+
+                        <!-- Rating Filter -->
+                        <div class="mb-4">
+                            <h6 class="mb-3">Minimum Rating</h6>
+                            <div class="rating-input">
+                                {% for i in range(5, 0, -1) %}
+                                <input type="radio" name="rating" value="{{ i }}" id="star{{ i }}">
+                                <label for="star{{ i }}"><i class="fas fa-star"></i></label>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sponsor Results -->
+        <div class="col-md-9">
+            <!-- Search Bar -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form method="GET" action="{{ url_for('index') }}" class="d-flex">
+                        <input type="text" class="form-control me-2" name="q" placeholder="Search sponsors..." value="{{ request.args.get('q', '') }}">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Sponsor Cards -->
+            <div class="row g-4">
+                {% for sponsor in sponsors %}
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="avatar-circle me-3">
+                                    {{ sponsor.company_name[0] if sponsor.company_name else sponsor.username[0] }}
+                                </div>
+                                <div>
+                                    <h5 class="card-title mb-1">{{ sponsor.company_name or sponsor.username }}</h5>
+                                    <p class="text-muted mb-0">{{ sponsor.industry }}</p>
+                                </div>
+                            </div>
+                            <p class="card-text">{{ sponsor.sponsorship_goals[:150] }}...</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="rating">
+                                    {% for i in range(5) %}
+                                    <i class="fas fa-star {% if i < sponsor.rating %}text-warning{% else %}text-muted{% endif %}"></i>
+                                    {% endfor %}
+                                </div>
+                                <span class="badge bg-primary">Budget: ${{ "%.2f"|format(sponsor.sponsorship_budget) }}</span>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a href="{{ url_for('profile', username=sponsor.username) }}" class="btn btn-outline-primary w-100">View Profile</a>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        No sponsors found matching your criteria.
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            {% if pagination.pages > 1 %}
+            <nav class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% for page in pagination.iter_pages() %}
+                        {% if page %}
+                            <li class="page-item {% if page == pagination.page %}active{% endif %}">
+                                <a class="page-link" href="{{ url_for('index', page=page, **request.args) }}">{{ page }}</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.avatar-circle {
+    width: 50px;
+    height: 50px;
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.rating-input {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+}
+
+.rating-input input {
+    display: none;
+}
+
+.rating-input label {
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: #ddd;
+    padding: 0 0.2rem;
+}
+
+.rating-input input:checked ~ label,
+.rating-input label:hover,
+.rating-input label:hover ~ label {
+    color: #ffd700;
+}
+
+.card {
+    transition: transform var(--transition-fast);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+</style>
+{% endblock %} 

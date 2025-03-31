@@ -1,0 +1,393 @@
+{% extends "base.html" %}
+
+{% block title %}Sponsorship Details - EduSponsor+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .sponsorship-header {
+        background: linear-gradient(135deg, var(--primary-color) 0%, #2c3e50 100%);
+        color: white;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+    }
+    
+    .sponsorship-card {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .sponsorship-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    
+    .sponsorship-status {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+    
+    .status-approved {
+        background: #d4edda;
+        color: #155724;
+    }
+    
+    .status-pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+    
+    .status-rejected {
+        background: #f8d7da;
+        color: #721c24;
+    }
+    
+    .sponsorship-amount {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+    
+    .sponsorship-meta {
+        color: #666;
+        font-size: 0.9rem;
+        margin: 0.5rem 0;
+    }
+    
+    .action-btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 5px;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .action-btn:hover {
+        transform: translateY(-1px);
+    }
+    
+    .action-btn-success {
+        background: #28a745;
+        color: white;
+        border: none;
+    }
+    
+    .action-btn-success:hover {
+        background: #218838;
+        color: white;
+    }
+    
+    .action-btn-danger {
+        background: #dc3545;
+        color: white;
+        border: none;
+    }
+    
+    .action-btn-danger:hover {
+        background: #c82333;
+        color: white;
+    }
+    
+    .action-btn-primary {
+        background: var(--primary-color);
+        color: white;
+        border: none;
+    }
+    
+    .action-btn-primary:hover {
+        background: #0056b3;
+        color: white;
+    }
+    
+    .info-label {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .info-value {
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: #2c3e50;
+    }
+    
+    .profile-image {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid white;
+    }
+    
+    .section-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .section-title i {
+        color: var(--primary-color);
+    }
+    
+    .action-section {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-top: 2rem;
+    }
+    
+    .action-section-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+    
+    .action-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+    
+    .action-buttons form {
+        margin: 0;
+    }
+    
+    .confirmation-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .confirmation-content {
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        max-width: 500px;
+        width: 90%;
+        text-align: center;
+    }
+    
+    .confirmation-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 1.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="sponsorship-header">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="mb-2">Sponsorship Details</h1>
+                <p class="mb-0">View and manage your sponsorship information</p>
+            </div>
+            <span class="sponsorship-status status-{{ sponsorship.status }}">
+                {{ sponsorship.status|title }}
+            </span>
+        </div>
+    </div>
+</div>
+
+<div class="container py-4">
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <!-- Event Information -->
+            <div class="sponsorship-card mb-4">
+                <h3 class="section-title">
+                    <i class="fas fa-calendar-alt"></i>
+                    Event Information
+                </h3>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="info-label">Event Title</div>
+                        <div class="info-value">{{ sponsorship.event.title }}</div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="info-label">Event Date</div>
+                        <div class="info-value">{{ sponsorship.event.date.strftime('%B %d, %Y') }}</div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="info-label">Location</div>
+                        <div class="info-value">{{ sponsorship.event.location }}</div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="info-label">Funding Goal</div>
+                        <div class="info-value">${{ "%.2f"|format(sponsorship.event.funding_goal) }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sponsorship Details -->
+            <div class="sponsorship-card mb-4">
+                <h3 class="section-title">
+                    <i class="fas fa-handshake"></i>
+                    Sponsorship Details
+                </h3>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="info-label">Amount</div>
+                        <div class="sponsorship-amount">${{ "%.2f"|format(sponsorship.amount) }}</div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="info-label">Requested On</div>
+                        <div class="info-value">{{ sponsorship.created_at.strftime('%B %d, %Y') }}</div>
+                    </div>
+                    {% if sponsorship.message %}
+                    <div class="col-12">
+                        <div class="info-label">Message</div>
+                        <div class="info-value">{{ sponsorship.message }}</div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Action Section -->
+            {% if sponsorship.status == 'pending' %}
+                {% if current_user.id == sponsorship.event.organizer_id %}
+                    <div class="action-section">
+                        <h3 class="action-section-title">
+                            <i class="fas fa-cog me-2"></i>
+                            Review Sponsorship Request
+                        </h3>
+                        <div class="action-buttons">
+                            <form action="{{ url_for('approve_sponsorship', sponsorship_id=sponsorship.id) }}" method="POST" 
+                                  onsubmit="return confirmAction('approve')">
+                                <button type="submit" class="action-btn action-btn-success">
+                                    <i class="fas fa-check"></i>
+                                    Accept Sponsorship
+                                </button>
+                            </form>
+                            <form action="{{ url_for('reject_sponsorship', sponsorship_id=sponsorship.id) }}" method="POST"
+                                  onsubmit="return confirmAction('reject')">
+                                <button type="submit" class="action-btn action-btn-danger">
+                                    <i class="fas fa-times"></i>
+                                    Decline Sponsorship
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Sponsor Information -->
+            <div class="sponsorship-card mb-4">
+                <h3 class="section-title">
+                    <i class="fas fa-user"></i>
+                    Sponsor Information
+                </h3>
+                <div class="text-center mb-3">
+                    <img src="{{ sponsorship.sponsor.profile_picture or url_for('static', filename='images/default-avatar.png') }}" 
+                         alt="{{ sponsorship.sponsor.username }}" 
+                         class="profile-image mb-3">
+                    <h4 class="mb-1">{{ sponsorship.sponsor.username }}</h4>
+                    <p class="text-muted mb-0">{{ sponsorship.sponsor.role|title }}</p>
+                </div>
+            </div>
+
+            <!-- Communication -->
+            {% if sponsorship.status == 'approved' %}
+                <div class="sponsorship-card">
+                    <h3 class="section-title">
+                        <i class="fas fa-comments"></i>
+                        Communication
+                    </h3>
+                    <div class="d-grid">
+                        <a href="{{ url_for('event_chat', event_id=sponsorship.event_id) }}" 
+                           class="action-btn action-btn-primary">
+                            <i class="fas fa-comments"></i>
+                            Chat with Organizer
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div class="confirmation-modal" id="confirmationModal">
+    <div class="confirmation-content">
+        <h4 id="modalTitle"></h4>
+        <p id="modalMessage"></p>
+        <div class="confirmation-buttons">
+            <button class="action-btn action-btn-danger" onclick="closeModal()">Cancel</button>
+            <button class="action-btn action-btn-success" onclick="confirmAction()">Confirm</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let currentForm = null;
+    let currentAction = null;
+
+    function confirmAction(action) {
+        currentAction = action;
+        const modal = document.getElementById('confirmationModal');
+        const title = document.getElementById('modalTitle');
+        const message = document.getElementById('modalMessage');
+        
+        if (action === 'approve') {
+            title.textContent = 'Accept Sponsorship';
+            message.textContent = 'Are you sure you want to accept this sponsorship? This action cannot be undone.';
+        } else {
+            title.textContent = 'Decline Sponsorship';
+            message.textContent = 'Are you sure you want to decline this sponsorship? This action cannot be undone.';
+        }
+        
+        modal.style.display = 'flex';
+        return false;
+    }
+
+    function closeModal() {
+        document.getElementById('confirmationModal').style.display = 'none';
+    }
+
+    function confirmAction() {
+        if (currentAction === 'approve') {
+            document.querySelector('form[action*="approve_sponsorship"]').submit();
+        } else {
+            document.querySelector('form[action*="reject_sponsorship"]').submit();
+        }
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        const modal = document.getElementById('confirmationModal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    }
+</script>
+{% endblock %} 

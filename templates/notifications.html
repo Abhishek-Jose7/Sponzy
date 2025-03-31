@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+
+{% block title %}Notifications{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>Notifications</h1>
+                <div>
+                    <button class="btn btn-outline-primary" id="markAllRead">
+                        Mark All as Read
+                    </button>
+                    <button class="btn btn-outline-danger" id="clearAll">
+                        Clear All
+                    </button>
+                </div>
+            </div>
+
+            <!-- Notification Filters -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <select class="form-select" id="typeFilter">
+                                <option value="all">All Types</option>
+                                <option value="sponsorship">Sponsorship</option>
+                                <option value="message">Messages</option>
+                                <option value="system">System</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-select" id="statusFilter">
+                                <option value="all">All Status</option>
+                                <option value="unread">Unread</option>
+                                <option value="read">Read</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-select" id="timeFilter">
+                                <option value="all">All Time</option>
+                                <option value="today">Today</option>
+                                <option value="week">This Week</option>
+                                <option value="month">This Month</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notifications List -->
+            <div class="card">
+                <div class="list-group list-group-flush" id="notificationsList">
+                    {% for notification in notifications %}
+                    <div class="list-group-item {% if not notification.is_read %}list-group-item-light{% endif %}"
+                         data-notification-id="{{ notification.id }}"
+                         data-notification-type="{{ notification.type }}">
+                        <div class="d-flex w-100 justify-content-between align-items-center">
+                            <div class="flex-grow-1">
+                                <div class="d-flex align-items-center mb-1">
+                                    <i class="fas fa-{{ get_notification_icon(notification.type) }} me-2"></i>
+                                    <h6 class="mb-0">{{ notification.title }}</h6>
+                                    {% if not notification.is_read %}
+                                    <span class="badge bg-primary ms-2">New</span>
+                                    {% endif %}
+                                </div>
+                                <p class="mb-1">{{ notification.message }}</p>
+                                <small class="text-muted">
+                                    {{ notification.created_at|timeago }}
+                                </small>
+                            </div>
+                            <div class="ms-3">
+                                {% if notification.link %}
+                                <a href="{{ notification.link }}" class="btn btn-sm btn-outline-primary me-2">
+                                    View
+                                </a>
+                                {% endif %}
+                                <button class="btn btn-sm btn-outline-danger delete-notification" 
+                                        data-notification-id="{{ notification.id }}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="list-group-item text-center py-5">
+                        <i class="fas fa-bell fa-3x text-muted mb-3"></i>
+                        <h5>No notifications yet</h5>
+                        <p class="text-muted mb-0">We'll notify you when something important happens.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            {% if pagination %}
+            <nav class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% for page in pagination.iter_pages() %}
+                        {% if page %}
+                            <li class="page-item {% if page == pagination.page %}active{% endif %}">
+                                <a class="page-link" href="{{ url_for('notifications', page=page) }}">{{ page }}</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var socket = io();
+    
+    // Handle mark all as read
+    document.getElementById('markAllRead').addEventListener('click', function() {
+        fetch('{{ url_for("mark_all_notifications_read") }}')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.querySelectorAll('.badge').forEach(badge => badge.remove());
+                    document.querySelectorAll('.list-group-item-light').forEach(item => {
+                        item.classList.remove('list-group-item-light');
+                    });
+                }
+            });
+    });
+    
+    // Handle clear all
+    document.getElementById('clearAll').addEventListener('click', function() {
+        if (confirm('Are you sure you want to delete all notifications?')) {
+            fetch('{{ url_for("clear_all_notifications") }}', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('notificationsList').innerHTML = `
+                            <div class="list-group-item text-center py-5">
+                                <i class="fas fa-bell fa-3x text-muted mb-3"></i>
+                                <h5>No notifications yet</h5>
+                                <p class="text-muted mb-0">We'll notify you when something important happens.</p>
+                            </div>
+                        `;
+                    }
+                });
+        }
+    });
+    
+    // Handle individual notification deletion
+    document.querySelectorAll('.delete-notification').forEach(button => {
+        button.addEventListener('click', function() {
+            const notificationId = this.dataset.notificationId;
+            fetch(`/notification/${notificationId}/delete`, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        this.closest('.list-group-item').remove();
+                    }
+                });
+        });
+    });
+    
+    // Handle filters
+    const filters = ['type', 'status', 'time'];
+    filters.forEach(filter => {
+        document.getElementById(`${filter}Filter`).addEventListener('change', function() {
+            applyFilters();
+        });
+    });
+    
+    function applyFilters() {
+        const type = document.getElementById('typeFilter').value;
+        const status = document.getElementById('statusFilter').value;
+        const time = document.getElementById('timeFilter').value;
+        
+        document.querySelectorAll('.list-group-item').forEach(item => {
+            if (item.dataset.notificationId) {  // Skip the "no notifications" message
+                let show = true;
+                
+                // Type filter
+                if (type !== 'all' && item.dataset.notificationType !== type) {
+                    show = false;
+                }
+                
+                // Status filter
+                if (status !== 'all') {
+                    const isRead = !item.classList.contains('list-group-item-light');
+                    if ((status === 'read' && !isRead) || (status === 'unread' && isRead)) {
+                        show = false;
+                    }
+                }
+                
+                // Time filter
+                if (time !== 'all') {
+                    const createdAt = new Date(item.dataset.createdAt);
+                    const now = new Date();
+                    const diff = now - createdAt;
+                    
+                    if (time === 'today' && diff > 86400000) show = false;  // 24 hours
+                    else if (time === 'week' && diff > 604800000) show = false;  // 7 days
+                    else if (time === 'month' && diff > 2592000000) show = false;  // 30 days
+                }
+                
+                item.style.display = show ? '' : 'none';
+            }
+        });
+    }
+    
+    // Real-time updates
+    socket.on('notification', function(data) {
+        const notificationHtml = `
+            <div class="list-group-item list-group-item-light" data-notification-id="${data.id}" data-notification-type="${data.type}">
+                <div class="d-flex w-100 justify-content-between align-items-center">
+                    <div class="flex-grow-1">
+                        <div class="d-flex align-items-center mb-1">
+                            <i class="fas fa-${getNotificationIcon(data.type)} me-2"></i>
+                            <h6 class="mb-0">${data.title}</h6>
+                            <span class="badge bg-primary ms-2">New</span>
+                        </div>
+                        <p class="mb-1">${data.message}</p>
+                        <small class="text-muted">Just now</small>
+                    </div>
+                    <div class="ms-3">
+                        ${data.link ? `<a href="${data.link}" class="btn btn-sm btn-outline-primary me-2">View</a>` : ''}
+                        <button class="btn btn-sm btn-outline-danger delete-notification" data-notification-id="${data.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        const noNotifications = document.querySelector('.list-group-item.text-center');
+        if (noNotifications) {
+            noNotifications.remove();
+        }
+        
+        document.getElementById('notificationsList').insertAdjacentHTML('afterbegin', notificationHtml);
+    });
+});
+
+function getNotificationIcon(type) {
+    const icons = {
+        'sponsorship': 'hand-holding-usd',
+        'message': 'envelope',
+        'system': 'info-circle',
+        'default': 'bell'
+    };
+    return icons[type] || icons.default;
+}
+</script>
+{% endblock %} 

@@ -1,0 +1,332 @@
+{% extends "base.html" %}
+
+{% block title %}Discover{% endblock %}
+
+{% block extra_css %}
+<style>
+.filter-badge {
+    cursor: pointer;
+    transition: all 0.3s;
+}
+.filter-badge:hover {
+    transform: translateY(-2px);
+}
+.card-hover {
+    transition: transform 0.3s;
+}
+.card-hover:hover {
+    transform: translateY(-5px);
+}
+.match-score-tooltip {
+    position: relative;
+    cursor: help;
+}
+.match-score-tooltip:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 5px 10px;
+    background: rgba(0,0,0,0.8);
+    color: white;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 1000;
+}
+.event-card {
+    height: 100%;
+}
+.event-image {
+    height: 200px;
+    object-fit: cover;
+}
+.progress {
+    background-color: #e9ecef;
+}
+.progress-bar {
+    background-color: var(--primary-color);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Filters Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="mb-3">Filters</h5>
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <select class="form-select" id="categoryFilter">
+                                <option value="">All Categories</option>
+                                {% for category in categories %}
+                                    <option value="{{ category }}">{{ category }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" id="locationFilter">
+                                <option value="">All Locations</option>
+                                {% for location in locations %}
+                                    <option value="{{ location }}">{{ location }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" id="sortBy">
+                                <option value="match">Match Score</option>
+                                <option value="date">Date</option>
+                                <option value="funding">Funding Progress</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="searchFilter" placeholder="Search...">
+                                <button class="btn btn-primary" type="button" id="searchBtn">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {% if current_user.role == 'sponsor' %}
+                    <div class="mt-3">
+                        <span class="badge bg-primary filter-badge me-2 mb-2" data-filter="sustainability">
+                            <i class="fas fa-leaf"></i> Sustainability
+                        </span>
+                        <span class="badge bg-primary filter-badge me-2 mb-2" data-filter="diversity">
+                            <i class="fas fa-users"></i> Diversity
+                        </span>
+                        <span class="badge bg-primary filter-badge me-2 mb-2" data-filter="innovation">
+                            <i class="fas fa-lightbulb"></i> Innovation
+                        </span>
+                        <span class="badge bg-primary filter-badge me-2 mb-2" data-filter="remote">
+                            <i class="fas fa-laptop-house"></i> Remote
+                        </span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Similar Users -->
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Similar {{ 'Organizations' if current_user.seeker_type == 'organization' else 'Users' }}</h5>
+                    <button class="btn btn-sm btn-light" id="refreshUsers">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+                <div class="card-body" id="similarUsersContainer">
+                    {% if similar_users %}
+                        <div class="list-group list-group-flush" id="similarUsersList">
+                            {% for user in similar_users %}
+                                <div class="list-group-item card-hover">
+                                    <div class="d-flex align-items-center">
+                                        <img src="{{ user.profile_picture or url_for('static', filename='images/default-avatar.png') }}" 
+                                             class="rounded-circle me-3" style="width: 48px; height: 48px; object-fit: cover;">
+                                        <div>
+                                            <h6 class="mb-0">
+                                                {% if user.role == 'seeker' %}
+                                                    {% if user.seeker_type == 'organization' %}
+                                                        {{ user.organization_name }}
+                                                    {% else %}
+                                                        {{ user.first_name }} {{ user.last_name }}
+                                                    {% endif %}
+                                                {% else %}
+                                                    {{ user.company_name }}
+                                                {% endif %}
+                                            </h6>
+                                            <small class="text-muted">
+                                                {% if user.role == 'seeker' %}
+                                                    {{ user.sector or 'No sector specified' }}
+                                                {% else %}
+                                                    {{ user.industry or 'No industry specified' }}
+                                                {% endif %}
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2">
+                                        <a href="{{ url_for('profile', username=user.username) }}" 
+                                           class="btn btn-sm btn-outline-primary">View Profile</a>
+                                        {% if current_user.role == 'sponsor' and user.role == 'seeker' %}
+                                            <a href="{{ url_for('chat', recipient_id=user.id) }}" 
+                                               class="btn btn-sm btn-outline-success">Message</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                            <p class="mb-0">No similar users found yet.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Recommended Events -->
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Recommended Events</h5>
+                    <button class="btn btn-sm btn-light" id="refreshEvents">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div id="eventsContainer">
+                        {% if recommended_events %}
+                            <div class="row g-4" id="eventsList">
+                                {% for event in recommended_events %}
+                                    <div class="col-md-6">
+                                        <div class="card h-100 card-hover event-card">
+                                            {% if event.featured_image %}
+                                                <img src="{{ event.featured_image }}" class="card-img-top event-image" alt="{{ event.title }}">
+                                            {% else %}
+                                                <img src="{{ url_for('static', filename='images/default-event.jpg') }}" class="card-img-top event-image" alt="Default Event Image">
+                                            {% endif %}
+                                            <div class="card-body">
+                                                <h5 class="card-title">{{ event.title }}</h5>
+                                                <p class="card-text text-muted">{{ event.short_description or event.description[:150] + '...' }}</p>
+                                                
+                                                {% if current_user.role == 'sponsor' and event.id in event_scores %}
+                                                    <div class="mb-3">
+                                                        <div class="d-flex align-items-center mb-2">
+                                                            <div class="me-2 match-score-tooltip" 
+                                                                 data-tooltip="Based on your preferences and event characteristics">
+                                                                Match Score:
+                                                            </div>
+                                                            <div class="progress flex-grow-1" style="height: 8px;">
+                                                                <div class="progress-bar" role="progressbar" 
+                                                                     style="width: {{ event_scores[event.id].score }}%"></div>
+                                                            </div>
+                                                            <div class="ms-2">{{ event_scores[event.id].score }}%</div>
+                                                        </div>
+                                                        <small class="text-muted">
+                                                            {% for reason in event_scores[event.id].reasons[:2] %}
+                                                                <div><i class="fas fa-check-circle text-success me-1"></i> {{ reason }}</div>
+                                                            {% endfor %}
+                                                        </small>
+                                                    </div>
+                                                {% endif %}
+                                                
+                                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-calendar-alt me-1"></i>
+                                                        {{ event.date.strftime('%B %d, %Y') }}
+                                                    </small>
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-map-marker-alt me-1"></i>
+                                                        {{ event.location }}
+                                                    </small>
+                                                </div>
+                                                
+                                                <div class="progress mb-2" style="height: 8px;">
+                                                    <div class="progress-bar" role="progressbar" 
+                                                         style="width: {{ (event.current_funding / event.funding_goal * 100)|round }}%">
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                                    <small class="text-muted">
+                                                        ${{ "%.2f"|format(event.current_funding) }} raised of ${{ "%.2f"|format(event.funding_goal) }}
+                                                    </small>
+                                                    <small class="text-muted">
+                                                        {{ ((event.current_funding / event.funding_goal * 100)|round)|int }}%
+                                                    </small>
+                                                </div>
+                                                
+                                                <div class="mt-3">
+                                                    <a href="{{ url_for('event_details', event_id=event.id) }}" 
+                                                       class="btn btn-primary btn-sm">View Details</a>
+                                                    {% if current_user.role == 'sponsor' %}
+                                                        <a href="{{ url_for('create_sponsorship', event_id=event.id) }}" 
+                                                           class="btn btn-success btn-sm">Sponsor</a>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="text-center py-4">
+                                <i class="fas fa-calendar-alt fa-3x text-muted mb-3"></i>
+                                <p class="mb-0">No recommended events found yet.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- WebSocket Integration -->
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize WebSocket connection
+    const socket = io();
+    
+    // Join discover room
+    socket.emit('join_discover_room');
+    
+    // Handle new event notifications
+    socket.on('new_event_notification', function(data) {
+        // Refresh events list
+        document.getElementById('refreshEvents').click();
+    });
+    
+    // Handle filter changes
+    const filters = document.querySelectorAll('.filter-badge');
+    filters.forEach(filter => {
+        filter.addEventListener('click', function() {
+            this.classList.toggle('active');
+            applyFilters();
+        });
+    });
+    
+    // Handle search
+    document.getElementById('searchBtn').addEventListener('click', applyFilters);
+    
+    // Handle sort changes
+    document.getElementById('sortBy').addEventListener('change', applyFilters);
+    
+    // Handle refresh buttons
+    document.getElementById('refreshUsers').addEventListener('click', function() {
+        socket.emit('refresh_similar_users');
+    });
+    
+    document.getElementById('refreshEvents').addEventListener('click', function() {
+        socket.emit('refresh_recommended_events');
+    });
+    
+    // Apply filters function
+    function applyFilters() {
+        const activeFilters = Array.from(document.querySelectorAll('.filter-badge.active'))
+            .map(f => f.dataset.filter);
+        
+        const filterData = {
+            category: document.getElementById('categoryFilter').value,
+            location: document.getElementById('locationFilter').value,
+            search: document.getElementById('searchFilter').value,
+            sort: document.getElementById('sortBy').value,
+            filters: activeFilters
+        };
+        
+        socket.emit('apply_filters', filterData);
+    }
+});
+</script>
+{% endblock %}
+{% endblock %} 

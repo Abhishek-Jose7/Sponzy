@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block title %}About Us{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero Section -->
+    <div class="row mb-5">
+        <div class="col-md-8 mx-auto text-center">
+            <h1 class="display-4 mb-4">About EduSponsor+</h1>
+            <p class="lead">Connecting educational institutions with sponsors to create impactful events and foster innovation in education.</p>
+        </div>
+    </div>
+
+    <!-- Mission Section -->
+    <div class="row mb-5">
+        <div class="col-md-6">
+            <h2 class="mb-4">Our Mission</h2>
+            <p>EduSponsor+ aims to bridge the gap between educational institutions and corporate sponsors, making it easier to organize and fund educational events that drive innovation and learning.</p>
+            <p>We believe that collaboration between academia and industry is essential for creating meaningful educational experiences and preparing students for the future.</p>
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h3 class="card-title mb-4">Our Values</h3>
+                    <ul class="list-unstyled">
+                        <li class="mb-3">
+                            <i class="fas fa-lightbulb text-primary me-2"></i>
+                            <strong>Innovation</strong> - Promoting creative solutions in education
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-handshake text-success me-2"></i>
+                            <strong>Collaboration</strong> - Building strong partnerships between institutions and sponsors
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-graduation-cap text-info me-2"></i>
+                            <strong>Excellence</strong> - Maintaining high standards in education and event organization
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-users text-warning me-2"></i>
+                            <strong>Community</strong> - Fostering a supportive network of educators and sponsors
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Team Section -->
+    <div class="row mb-5">
+        <div class="col-12 text-center mb-4">
+            <h2>Our Team</h2>
+            <p class="lead">Meet the people behind EduSponsor+</p>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <div class="avatar-circle mx-auto mb-3">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h5 class="card-title">John Doe</h5>
+                    <p class="text-muted">Founder & CEO</p>
+                    <p class="card-text">Passionate about education and technology, John founded EduSponsor+ to revolutionize educational event funding.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <div class="avatar-circle mx-auto mb-3">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h5 class="card-title">Jane Smith</h5>
+                    <p class="text-muted">Head of Partnerships</p>
+                    <p class="card-text">With years of experience in corporate partnerships, Jane helps connect sponsors with educational institutions.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <div class="avatar-circle mx-auto mb-3">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h5 class="card-title">Mike Johnson</h5>
+                    <p class="text-muted">Technical Lead</p>
+                    <p class="card-text">Mike leads our technical team in creating innovative solutions for educational event management.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Impact Section -->
+    <div class="row mb-5">
+        <div class="col-12 text-center mb-4">
+            <h2>Our Impact</h2>
+            <p class="lead">Making a difference in education</p>
+        </div>
+        <div class="col-md-3 text-center mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <i class="fas fa-calendar-check fa-3x text-primary mb-3"></i>
+                    <h3 class="display-4">500+</h3>
+                    <p class="text-muted">Events Funded</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 text-center mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <i class="fas fa-university fa-3x text-success mb-3"></i>
+                    <h3 class="display-4">200+</h3>
+                    <p class="text-muted">Institutions</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 text-center mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <i class="fas fa-building fa-3x text-info mb-3"></i>
+                    <h3 class="display-4">100+</h3>
+                    <p class="text-muted">Sponsors</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 text-center mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <i class="fas fa-users fa-3x text-warning mb-3"></i>
+                    <h3 class="display-4">50K+</h3>
+                    <p class="text-muted">Students Impacted</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Section -->
+    <div class="row">
+        <div class="col-md-8 mx-auto text-center">
+            <h2 class="mb-4">Get in Touch</h2>
+            <p class="lead mb-4">Have questions or want to learn more about EduSponsor+?</p>
+            <a href="{{ url_for('contact') }}" class="btn btn-primary btn-lg">
+                Contact Us
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.avatar-circle {
+    width: 120px;
+    height: 120px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 3rem;
+}
+
+.card {
+    transition: transform var(--transition-fast);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+</style>
+{% endblock %} 

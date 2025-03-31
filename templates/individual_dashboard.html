@@ -1,0 +1,412 @@
+{% extends "base.html" %}
+
+{% block title %}Individual Dashboard - EduSponsor+{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <div class="container">
+        <h1>Welcome, {{ current_user.first_name }}!</h1>
+        <p>Manage your events and track your sponsorships</p>
+    </div>
+</div>
+
+<div class="container py-4">
+    <!-- Individual Stats -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div class="stat-value">{{ events|length }}</div>
+                <div class="stat-label">Total Events</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <div class="stat-value">
+                    ${{ "%.2f"|format(events|sum(attribute='current_funding')) }}
+                </div>
+                <div class="stat-label">Total Funding</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-handshake"></i>
+                </div>
+                <div class="stat-value">{{ active_sponsorships|length }}</div>
+                <div class="stat-label">Active Sponsorships</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="stat-value">{{ "%.1f"|format(current_user.rating or 0) }}</div>
+                <div class="stat-label">Rating</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <!-- Recent Events -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Your Events</h5>
+                    <a href="{{ url_for('create_event') }}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i> Create Event
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if events %}
+                        <div class="event-list">
+                            {% for event in events %}
+                                <div class="event-card">
+                                    <div class="event-title">{{ event.title }}</div>
+                                    <div class="event-meta">
+                                        <span><i class="fas fa-map-marker-alt"></i> {{ event.location }}</span>
+                                        <span><i class="fas fa-calendar"></i> {{ event.date|date }}</span>
+                                    </div>
+                                    <div class="event-progress">
+                                        <div class="event-progress-bar" style="width: {{ (event.current_funding / event.funding_goal * 100)|round }}%"></div>
+                                    </div>
+                                    <div class="event-funding">
+                                        <span>${{ "%.2f"|format(event.current_funding) }} raised</span>
+                                        <span>{{ (event.current_funding / event.funding_goal * 100)|round }}% of ${{ "%.2f"|format(event.funding_goal) }}</span>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <p class="text-muted">No events yet. Create your first event to start receiving sponsorships!</p>
+                            <a href="{{ url_for('create_event') }}" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Create Event
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Sponsorships -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Recent Sponsorships</h5>
+                </div>
+                <div class="card-body">
+                    {% if active_sponsorships or pending_sponsorships %}
+                        <div class="sponsorship-list">
+                            {% for sponsorship in (active_sponsorships + pending_sponsorships)[:5] %}
+                                <div class="sponsorship-card">
+                                    <div class="sponsorship-header">
+                                        <span class="sponsorship-amount">${{ "%.2f"|format(sponsorship.amount) }}</span>
+                                        <span class="sponsorship-status status-{{ sponsorship.status }}">
+                                            {{ sponsorship.status|title }}
+                                        </span>
+                                    </div>
+                                    <div class="sponsorship-meta">
+                                        <div>For: {{ sponsorship.event.title }}</div>
+                                        <div>From: {{ sponsorship.sponsor.company_name }}</div>
+                                        <div>Date: {{ sponsorship.created_at|date }}</div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted text-center py-3">No sponsorships yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Individual Profile -->
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <div class="profile-image mb-3">
+                        {% if current_user.profile_picture %}
+                            <img src="{{ current_user.profile_picture }}" alt="Profile" class="rounded-circle">
+                        {% else %}
+                            <div class="profile-placeholder">
+                                {{ current_user.first_name[0] }}{{ current_user.last_name[0] }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <h5>{{ current_user.first_name }} {{ current_user.last_name }}</h5>
+                    <p class="text-muted">{{ current_user.bio or 'No bio added yet' }}</p>
+                    
+                    {% if current_user.skills %}
+                        <div class="skills-section mt-3">
+                            <h6>Skills</h6>
+                            <div class="skill-tags">
+                                {% for skill in current_user.skills %}
+                                    <span class="badge bg-primary">{{ skill }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if current_user.achievements %}
+                        <div class="achievements-section mt-3">
+                            <h6>Achievements</h6>
+                            <div class="achievement-list">
+                                {% for achievement in current_user.achievements.split('\n') %}
+                                    <div class="achievement-item">
+                                        <i class="fas fa-trophy text-warning"></i>
+                                        {{ achievement.strip() }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <div class="profile-links mt-3">
+                        {% if current_user.resume_url %}
+                            <a href="{{ current_user.resume_url }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-file-alt"></i> Resume
+                            </a>
+                        {% endif %}
+                        {% if current_user.portfolio_url %}
+                            <a href="{{ current_user.portfolio_url }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-globe"></i> Portfolio
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Similar Individuals -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Similar Individuals</h5>
+                </div>
+                <div class="card-body">
+                    {% if similar_individuals %}
+                        <div class="similar-users-list">
+                            {% for stats in similar_individuals %}
+                                <div class="user-card">
+                                    <div class="user-info">
+                                        <h6>{{ stats.user.first_name }} {{ stats.user.last_name }}</h6>
+                                        <div class="user-meta">
+                                            <span><i class="fas fa-calendar"></i> {{ stats.event_count }} events</span>
+                                            <span><i class="fas fa-dollar-sign"></i> ${{ "%.2f"|format(stats.total_funding) }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="user-rating">
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-star"></i> {{ "%.1f"|format(stats.user.rating or 0) }}
+                                        </span>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted text-center py-3">No similar individuals found.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.dashboard-header {
+    background: linear-gradient(135deg, #2C3E50 0%, #3498DB 100%);
+    color: white;
+    padding: 3rem 0;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-icon {
+    font-size: 2rem;
+    color: #3498DB;
+    margin-bottom: 1rem;
+}
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.event-card {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+}
+
+.event-card:hover {
+    border-color: #3498DB;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.event-title {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.event-meta {
+    display: flex;
+    gap: 1rem;
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.event-progress {
+    height: 6px;
+    background: #eee;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.event-progress-bar {
+    height: 100%;
+    background: #3498DB;
+    transition: width 0.3s ease;
+}
+
+.event-funding {
+    display: flex;
+    justify-content: space-between;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.sponsorship-card {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.sponsorship-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.sponsorship-amount {
+    font-weight: 500;
+    color: #3498DB;
+}
+
+.sponsorship-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+}
+
+.status-pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-approved {
+    background: #d4edda;
+    color: #155724;
+}
+
+.profile-image {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
+}
+
+.profile-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-placeholder {
+    width: 100%;
+    height: 100%;
+    background: #3498DB;
+    color: white;
+    font-size: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.achievement-item {
+    text-align: left;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.achievement-item i {
+    margin-right: 0.5rem;
+}
+
+.profile-links {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.user-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.user-meta {
+    display: flex;
+    gap: 1rem;
+    color: #666;
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+}
+
+.user-rating {
+    font-size: 0.9rem;
+}
+</style>
+{% endblock %} 

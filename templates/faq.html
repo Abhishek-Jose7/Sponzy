@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+
+{% block title %}FAQ{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="text-center mb-5">
+                <h1 class="display-4 mb-4">Frequently Asked Questions</h1>
+                <p class="lead">Find answers to common questions about EduSponsor+</p>
+            </div>
+
+            <!-- General Questions -->
+            <div class="mb-5">
+                <h2 class="mb-4">General Questions</h2>
+                <div class="accordion" id="generalAccordion">
+                    <div class="accordion-item">
+                        <h3 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#general1">
+                                What is EduSponsor+?
+                            </button>
+                        </h3>
+                        <div id="general1" class="accordion-collapse collapse show" data-bs-parent="#generalAccordion">
+                            <div class="accordion-body">
+                                EduSponsor+ is a platform that connects educational institutions with corporate sponsors to facilitate the organization and funding of educational events. We help institutions find sponsors for their events and enable companies to support educational initiatives.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h3 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#general2">
+                                How do I get started?
+                            </button>
+                        </h3>
+                        <div id="general2" class="accordion-collapse collapse" data-bs-parent="#generalAccordion">
+                            <div class="accordion-body">
+                                Getting started is easy! Simply create an account, choose your role (institution or sponsor), and complete your profile. Institutions can then create events and seek sponsors, while sponsors can browse events and provide funding.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- For Institutions -->
+            <div class="mb-5">
+                <h2 class="mb-4">For Educational Institutions</h2>
+                <div class="accordion" id="institutionAccordion">
+                    <div class="accordion-item">
+                        <h3 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#institution1">
+                                What types of events can I create?
+                            </button>
+                        </h3>
+                        <div id="institution1" class="accordion-collapse collapse show" data-bs-parent="#institutionAccordion">
+                            <div class="accordion-body">
+                                You can create various types of educational events including:
+                                <ul>
+                                    <li>Conferences and seminars</li>
+                                    <li>Workshops and training sessions</li>
+                                    <li>Hackathons and coding competitions</li>
+                                    <li>Career fairs and networking events</li>
+                                    <li>Research presentations</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h3 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#institution2">
+                                How do I create an event?
+                            </button>
+                        </h3>
+                        <div id="institution2" class="accordion-collapse collapse" data-bs-parent="#institutionAccordion">
+                            <div class="accordion-body">
+                                To create an event:
+                                <ol>
+                                    <li>Log in to your account</li>
+                                    <li>Click on "Create Event"</li>
+                                    <li>Fill in the event details (title, description, date, location, etc.)</li>
+                                    <li>Set your funding goal</li>
+                                    <li>Submit the event for review</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- For Sponsors -->
+            <div class="mb-5">
+                <h2 class="mb-4">For Sponsors</h2>
+                <div class="accordion" id="sponsorAccordion">
+                    <div class="accordion-item">
+                        <h3 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#sponsor1">
+                                How does sponsorship work?
+                            </button>
+                        </h3>
+                        <div id="sponsor1" class="accordion-collapse collapse show" data-bs-parent="#sponsorAccordion">
+                            <div class="accordion-body">
+                                As a sponsor, you can:
+                                <ul>
+                                    <li>Browse available events</li>
+                                    <li>Filter events by category, location, or funding amount</li>
+                                    <li>Review event details and proposals</li>
+                                    <li>Communicate with event organizers</li>
+                                    <li>Provide funding for selected events</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h3 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sponsor2">
+                                What are the benefits of sponsoring events?
+                            </button>
+                        </h3>
+                        <div id="sponsor2" class="accordion-collapse collapse" data-bs-parent="#sponsorAccordion">
+                            <div class="accordion-body">
+                                Sponsoring educational events offers several benefits:
+                                <ul>
+                                    <li>Build brand awareness among students and educators</li>
+                                    <li>Access to talented students for recruitment</li>
+                                    <li>Support educational initiatives in your community</li>
+                                    <li>Network with other sponsors and institutions</li>
+                                    <li>Tax benefits for educational sponsorships</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment and Security -->
+            <div class="mb-5">
+                <h2 class="mb-4">Payment and Security</h2>
+                <div class="accordion" id="paymentAccordion">
+                    <div class="accordion-item">
+                        <h3 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#payment1">
+                                How secure is the payment process?
+                            </button>
+                        </h3>
+                        <div id="payment1" class="accordion-collapse collapse show" data-bs-parent="#paymentAccordion">
+                            <div class="accordion-body">
+                                We use industry-standard security measures to protect all transactions:
+                                <ul>
+                                    <li>SSL encryption for all data transmission</li>
+                                    <li>Secure payment processing through trusted providers</li>
+                                    <li>Regular security audits and updates</li>
+                                    <li>Compliance with data protection regulations</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h3 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#payment2">
+                                What payment methods are accepted?
+                            </button>
+                        </h3>
+                        <div id="payment2" class="accordion-collapse collapse" data-bs-parent="#paymentAccordion">
+                            <div class="accordion-body">
+                                We accept various payment methods including:
+                                <ul>
+                                    <li>Credit and debit cards</li>
+                                    <li>Bank transfers</li>
+                                    <li>Digital wallets</li>
+                                    <li>Corporate payment solutions</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Support -->
+            <div class="text-center mt-5">
+                <h3 class="mb-4">Still have questions?</h3>
+                <p class="lead mb-4">Our support team is here to help you</p>
+                <a href="{{ url_for('contact') }}" class="btn btn-primary btn-lg">
+                    Contact Support
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.accordion-button:not(.collapsed) {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+    border-color: var(--primary-color);
+}
+
+.accordion-item {
+    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+</style>
+{% endblock %} 

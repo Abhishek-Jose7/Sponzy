@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+
+{% block title %}Choose Your Role - EduSponsor+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .role-selection-container {
+        max-width: 800px;
+        margin: 3rem auto;
+        padding: 2rem;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .role-selection-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+    
+    .role-selection-header h1 {
+        color: var(--primary-color);
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .role-selection-header p {
+        color: #666;
+        font-size: 1.2rem;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .role-options {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+    
+    .role-card {
+        background: white;
+        border: 2px solid #ddd;
+        border-radius: 15px;
+        padding: 2rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .role-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--primary-color);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .role-card.selected {
+        border-color: var(--primary-color);
+        background-color: rgba(74, 144, 226, 0.05);
+    }
+    
+    .role-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: var(--primary-color);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+    
+    .role-card:hover::before,
+    .role-card.selected::before {
+        transform: scaleX(1);
+    }
+    
+    .role-icon {
+        font-size: 3rem;
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+    }
+    
+    .role-title {
+        font-size: 1.5rem;
+        color: #333;
+        margin-bottom: 1rem;
+    }
+    
+    .role-description {
+        color: #666;
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+    }
+    
+    .role-features {
+        text-align: left;
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+    
+    .role-features ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .role-features li {
+        margin-bottom: 0.5rem;
+        color: #555;
+    }
+    
+    .role-features li i {
+        color: var(--primary-color);
+        margin-right: 0.5rem;
+    }
+    
+    .btn-continue {
+        width: 100%;
+        padding: 1rem;
+        font-size: 1.2rem;
+        border-radius: 8px;
+        background: var(--primary-color);
+        border: none;
+        color: white;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        opacity: 0.7;
+        pointer-events: none;
+    }
+    
+    .btn-continue.active {
+        opacity: 1;
+        pointer-events: auto;
+    }
+    
+    .btn-continue:hover {
+        background: #357abd;
+        transform: translateY(-2px);
+    }
+    
+    .role-card input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="role-selection-container">
+        <div class="role-selection-header">
+            <h1>Choose Your Role</h1>
+            <p>Select the role that best describes you to get started with EduSponsor+</p>
+        </div>
+        
+        <form method="POST" action="{{ url_for('signup') }}" id="roleForm">
+            <div class="role-options">
+                <div class="role-card" data-role="seeker">
+                    <input type="radio" name="role" value="seeker" id="seeker" required>
+                    <div class="role-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h2 class="role-title">Event Seeker</h2>
+                    <p class="role-description">Looking for sponsorship for your educational events</p>
+                    <div class="role-features">
+                        <ul>
+                            <li><i class="fas fa-check"></i> Create and manage events</li>
+                            <li><i class="fas fa-check"></i> Receive sponsorship offers</li>
+                            <li><i class="fas fa-check"></i> Track funding progress</li>
+                            <li><i class="fas fa-check"></i> Communicate with sponsors</li>
+                            <li><i class="fas fa-check"></i> Access analytics and reports</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="role-card" data-role="sponsor">
+                    <input type="radio" name="role" value="sponsor" id="sponsor" required>
+                    <div class="role-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h2 class="role-title">Sponsor</h2>
+                    <p class="role-description">Want to sponsor educational events and make a difference</p>
+                    <div class="role-features">
+                        <ul>
+                            <li><i class="fas fa-check"></i> Browse educational events</li>
+                            <li><i class="fas fa-check"></i> Make sponsorship offers</li>
+                            <li><i class="fas fa-check"></i> Track your sponsorships</li>
+                            <li><i class="fas fa-check"></i> Connect with event organizers</li>
+                            <li><i class="fas fa-check"></i> Access impact reports</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-continue">
+                <i class="fas fa-arrow-right me-2"></i>
+                Continue to Sign Up
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('roleForm');
+    const roleCards = document.querySelectorAll('.role-card');
+    const continueBtn = document.querySelector('.btn-continue');
+    
+    roleCards.forEach(card => {
+        card.addEventListener('click', function() {
+            // Remove selected class from all cards
+            roleCards.forEach(c => c.classList.remove('selected'));
+            
+            // Add selected class to clicked card
+            this.classList.add('selected');
+            
+            // Check the radio input
+            const radio = this.querySelector('input[type="radio"]');
+            radio.checked = true;
+            
+            // Enable continue button
+            continueBtn.classList.add('active');
+        });
+    });
+    
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const selectedRole = form.querySelector('input[name="role"]:checked');
+        if (selectedRole) {
+            // Store the selected role in session storage
+            sessionStorage.setItem('selectedRole', selectedRole.value);
+            // Redirect to the appropriate signup form
+            window.location.href = "{{ url_for('signup') }}";
+        }
+    });
+});
+</script>
+{% endblock %} 
